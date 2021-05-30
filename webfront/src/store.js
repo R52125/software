@@ -23,6 +23,16 @@ export default new Vuex.Store({
         masterpassword: '',
         // 开关机，0: 关机，1: 开机
         onoff: 0,
+        // 房间名
+        Room_id: '',
+        // 用户身份证号
+        user_id: '',
+        // 报表查询的开始时间
+        startdata: '',
+        // 报表查询的结束时间
+        enddata: '',
+        // 模式:  0：日报表; 1：周报表; 2：月报表
+        formmodel: '',
     },
     mutations:{
         handlemode(state, newmode){
@@ -41,7 +51,7 @@ export default new Vuex.Store({
         },
         check_id(state){
             ws.send(JSON.stringify({
-                event_id: 6,
+                event_id: 16,
                 data:{
                     id: this.state.master,
                     password: this.state.masterpassword,
@@ -61,9 +71,54 @@ export default new Vuex.Store({
             else
                 this.state.onoff = 1;
             ws.send(JSON.stringify({
-                event_id: 1,
+                event_id: 11,
                 data:{
-                    on: this.state.onoff,
+                    onoff: this.state.onoff,
+                }
+            }))
+        },
+        handleRoomId(state, newRoom){
+            this.state.Room_id = newRoom;
+        },
+        handleUserId(state, newUser){
+            this.state.user_id = newUser;
+        },
+        addnewuser(state){
+            ws.send(JSON.stringify({
+                event_id: 12,
+                data:{
+                    Room_id: this.state.Room_id,
+                    user_id: this.state.user_id,
+                }
+            }));
+            alert('登记成功');
+            router.push('/master');
+        },
+        reduceuser(state){
+            ws.send(JSON.stringify({
+                eventid: 13,
+                data:{
+                    Room_id: this.state.Room_id,
+                }
+            }))
+        },
+        handlestartdata(state, newstartdata){
+            this.state.startdata = newstartdata;
+        },
+        handleenddata(state, newenddata){
+            this.state.enddata = newenddata;
+        },
+        handleformmodel(state, newmodel){
+            this.state.formmodel = newmodel;
+        },
+        getForm(state){
+            ws.send(JSON.stringify({
+                eventid: 14,
+                data:{
+                    Room_id: this.state.Room_id,
+                    startdata: this.state.startdata,
+                    enddata: this.state.enddata,
+                    formmodle: this.state.formmodel,
                 }
             }))
         }
