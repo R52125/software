@@ -29,6 +29,16 @@ const Ws = require('ws');
 
     function handleConnection(ws){
         console.log('BE:WebSocket connection');
+        // ws.send(JSON.stringify({
+        //     "event_id": 17,
+        //     "data":{
+        //         "Room_id": "001",
+        //         "cstate": 1,
+        //         "Rmode": 0,
+        //         "tem": 25,
+        //         "wind": 2
+        //     }
+        // }))
         ws.on('message', handleMessage);
     }
 

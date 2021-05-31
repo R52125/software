@@ -46,10 +46,8 @@ export default {
   },
   methods:{
     ...mapMutations(['test']),
-    ...mapActions(['receivemsg']),
     startmonitor(){
       this.test()
-      this.receivemsg()
     }
   }
 }

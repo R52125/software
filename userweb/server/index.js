@@ -29,14 +29,26 @@ const Ws = require('ws');
 
     function handleConnection(ws){
         console.log('BE:WebSocket connection');
+        // while(1) {
+            // ws.send(JSON.stringify({
+            //     "hey": "hello",
+            // }));
+        // }
+        ws.send(JSON.stringify({
+            "event_id": 6,
+            "data":{
+                "interval": 1000
+            }
+        }))
+
         ws.on('message', handleMessage);
     }
 
     function handleMessage(msg){
         console.log(msg);
-        // server.clients.forEach((c) => {
-        //     c.send(msg);
-        // })
+        server.clients.forEach((c) => {
+            c.send(msg);
+        })
     }
 
 

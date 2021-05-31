@@ -7,7 +7,11 @@
       </template>
       <hr class="my-4">
     </b-jumbotron>
-
+<!--    <div>-->
+<!--      hello-->
+<!--      {{Ctemp}}-->
+<!--      {{Cmode}}-->
+<!--    </div>-->
     <b-tabs content-class="mt-3">
       <b-tab title="普通用户">
         <b-card bg-variant="light">
@@ -49,7 +53,7 @@ export default {
     };
   },
   computed:{
-    ...mapState(['room'])
+    ...mapState(['Ctemp', 'Cmode']),
   },
   // 方法
   methods: {
@@ -59,7 +63,7 @@ export default {
         username: this.username,
         roomnumber: this.roomnumber
       });
-    }
+    },
   },
 }
 </script>

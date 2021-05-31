@@ -96,14 +96,11 @@ export default {
   },
   methods:{
     ...mapMutations(['sendconfig', 'switchreq']),
-    ...mapActions(['receivemsg']),
     send(){
       this.sendconfig()
-      this.receivemsg()
     },
     centralswitch(){
       this.switchreq()
-      this.receivemsg()
     }
   },
 
