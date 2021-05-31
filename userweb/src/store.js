@@ -17,12 +17,22 @@ export default new Vuex.Store({
         switchbtn: 0,
         // wind 1,2,3: 低 中 高
         wind: 1,
-        // mode: 0: 制冷；1: 暖气
-        mode: 0,
+        // 从机工作模式: 0: 制冷；1: 暖气
+        Rmode: 0,
         // 身份证号
         id: '',
         // 房间号
-        room: ''
+        room: '',
+        // 主机工作模式: 0:制冷 1: 供暖
+        Cmode: 0,
+        // 主机工作温度
+        Ctemp: 0,
+        // 当前累计开销
+        currentcost: 0.0,
+        // 本次使用总开销
+        currentcost_total: 0.0,
+        // 状态汇报频率
+        state_interval: 1000,
     },
     mutations:{
         addtemperature(state){
@@ -48,33 +58,60 @@ export default new Vuex.Store({
                 this.state.wind--;
         },
         coldmode(state){
-            if (this.state.mode == 1 && this.state.switchbtn == 1)
-                this.state.mode = 0;
+            if (this.state.Rmode == 1 && this.state.switchbtn == 1)
+                this.state.Rmode = 0;
         },
         warmmode(state){
-            if(this.state.mode == 0 && this.state.switchbtn == 1)
-                this.state.mode = 1;
+            if(this.state.Rmode == 0 && this.state.switchbtn == 1)
+                this.state.Rmode = 1;
         },
         // 检查身份证号数字对不对
         check_id(state, logmes){
             this.state.room = logmes.roomnumber;
             this.state.id = logmes.username;
-            if (this.state.id.length != 18){
-                alert('身份证号为18位数字');
-            }
-            else if (this.state.room.length != 4){
-                alert('房间号是4位数字');
-            }
-            else {
-                ws.send(JSON.stringify({
-                    room: this.state.room,
-                    id: this.state.id
-                }));
-                router.push('/user')
-            }
+            ws.send(JSON.stringify({
+                room: this.state.room,
+                id: this.state.id
+            }));
+            router.push('/user')
+        },
+        // 中央空调状态反馈
+        WebSocket_config(state, newdata){
+            this.state.Cmode = newdata.data.mode;
+            this.state.Ctemp = newdata.data.temp;
+        },
+        // 处理主机送风
+        WebSocket_wind(state, newdata){
+            this.state.Ctemp = newdata.data.temp;
+            this.state.wind = newdata.data.speed;
+            this.state.Cmode = newdata.data.mode;
+            this.state.currentcost = newdata.data.cost;
+            // console.log(this.state.Ctemp, this.state.wind,this.state.Cmode,this.state.currentcost)
+        },
+        // 处理主机同意停止送风
+        WebSocket_stopwind(state, newdata){
+            this.state.currentcost_total = newdata.data.cost;
+            // console.log(this.state.currentcost_total)
+        },
+        WebSocket_interval(state, newdata){
+            this.state.state_interval = newdata.data.interval;
+            console.log(this.state.state_interval)
         }
+
     },
     actions:{
+        handle_centralConfig(context, newdata){
+            context.commit('WebSocket_config', newdata)
+        },
+        handle_sendwind(context, newdata){
+            context.commit('WebSocket_wind', newdata);
+        },
+        handle_stopwind_ack(context, newdata){
+            context.commit('WebSocket_stopwind', newdata);
+        },
+        handle_interval(context, newdata){
+            context.commit('WebSocket_interval', newdata);
+        }
     },
     plugins:[createPersistedState({
         storage:window.sessionStorage

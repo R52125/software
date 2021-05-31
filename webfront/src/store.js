@@ -226,41 +226,62 @@ export default new Vuex.Store({
             this.state.Rmode = newdata.data.Rmode;
             this.state.tem = newdata.data.tem;
             this.state.wind = newdata.data.wind;
-            console.log(this.state.Room_id, this.state.cstate, this.state.Rmode, this.state.tem, this.state.wind);
+            // console.log(this.state.Room_id, this.state.cstate, this.state.Rmode, this.state.tem, this.state.wind);
         }
     },
     actions:{
-        receivemsg(context){
-            ws.onmessage = function(callBack){
-                var e = JSON.parse(callBack.data);
-                // console.log(e);
-                switch(e.event_id){
-                    case 11:
-                        context.commit('WebSocket_switch_ack', e);
-                        break;
-                    case 12:
-                        context.commit('WebSocket_adduser_ack', e);
-                        break;
-                    case 13:
-                        context.commit('WebSocket_reduceuser_ack', e);
-                        break;
-                    case 14:
-                        context.commit('WebSocket_getform_ack', e);
-                        break;
-                    case 15:
-                        context.commit('WebSocket_config_ack', e);
-                        break;
-                    case 16:
-                        context.commit('Websocket_login_ack', e);
-                        break;
-                    case 17:
-                        context.commit('Websocket_monitor', e);
-                        break;
-                    default:
-                        console.log(e.event_id);
-                };
-            }
-        }
+        handle_switch(context, newdata){
+            context.commit('WebSocket_switch_ack', newdata)
+        },
+        handle_adduser(context, newdata){
+            context.commit('WebSocket_adduser_ack', newdata)
+        },
+        handle_reduceuser(context, newdata){
+            context.commit('WebSocket_reduceuser_ack', newdata)
+        },
+        handle_getform(context, newdata){
+            context.commit('WebSocket_getform_ack', newdata)
+        },
+        handle_config(context, newdata){
+            context.commit('WebSocket_config_ack', newdata)
+        },
+        handle_login(context, newdata){
+            context.commit('Websocket_login_ack', newdata)
+        },
+        handle_monitor(context, newdata){
+            context.commit('Websocket_monitor', newdata)
+        },
+        // receivemsg(context){
+        //     ws.onmessage = function(callBack){
+        //         var e = JSON.parse(callBack.data);
+        //         // console.log(e);
+        //         switch(e.event_id){
+        //             case 11:
+        //                 context.commit('WebSocket_switch_ack', e);
+        //                 break;
+        //             case 12:
+        //                 context.commit('WebSocket_adduser_ack', e);
+        //                 break;
+        //             case 13:
+        //                 context.commit('WebSocket_reduceuser_ack', e);
+        //                 break;
+        //             case 14:
+        //                 context.commit('WebSocket_getform_ack', e);
+        //                 break;
+        //             case 15:
+        //                 context.commit('WebSocket_config_ack', e);
+        //                 break;
+        //             case 16:
+        //                 context.commit('Websocket_login_ack', e);
+        //                 break;
+        //             case 17:
+        //                 context.commit('Websocket_monitor', e);
+        //                 break;
+        //             default:
+        //                 console.log(e.event_id);
+        //         };
+        //     }
+        // }
     }
     // plugins:[createPersistedState({
     //     storage:window.sessionStorage

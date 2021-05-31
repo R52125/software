@@ -92,10 +92,8 @@ export default {
   },
   methods:{
     ...mapMutations(['getForm']),
-    ...mapActions(['receivemsg']),
     getform(){
-      this.getForm(),
-      this.receivemsg()
+      this.getForm()
     }
   }
 }

@@ -67,10 +67,8 @@ export default {
   },
   methods:{
     ...mapMutations(['check_id']),
-    ...mapActions(['receivemsg']),
     login(){
       this.check_id()
-      this.receivemsg()
     }
   }
 }

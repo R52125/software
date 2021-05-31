@@ -1,4 +1,7 @@
 import {WS_ADDRESS} from "../configs";
+import store from "../store";
+
+
 
 function useWebSocket(){
     const ws = new WebSocket(WS_ADDRESS);
@@ -25,9 +28,49 @@ function useWebSocket(){
     function handleError(e){
         console.log('webSocket error', e);
     }
-    function handleMessage(e){
+    function handleMessage(callBack){
+        var e = JSON.parse(callBack.data);
+        // console.log(e)
+        switch (e.event_id){
+            // 中央空调状态反馈
+            case 1:
+                WebSocket_centralconfig(e);
+                break;
+            case 2:
+                break;
+            case 3:
+                WebSocket_sendwind(e);
+                break;
+            case 4:
+                break;
+            case 5:
+                WebSocket_stopwind(e);
+                break;
+            case 6:
+                WebSocket_interval(e);
+                break;
+            case 7:
+                break;
+            default:
+                console.log(e);
+        }
+    };
 
+    function WebSocket_centralconfig(newdata){
+        store.dispatch('handle_centralConfig', newdata);
+    };
+    function WebSocket_sendwind(newdata){
+        store.dispatch('handle_sendwind', newdata);
+    };
+    function WebSocket_stopwind(newdata){
+        store.dispatch('handle_stopwind_ack', newdata);
+    };
+    // 主机向从机汇报频率
+    function WebSocket_interval(newdata){
+        store.dispatch('handle_interval', newdata);
     }
+
+
 
     return ws;
 }

@@ -58,14 +58,11 @@ export default {
   },
   methods:{
     ...mapMutations(['addnewuser', 'reduceuser']),
-    ...mapActions(['receivemsg']),
     addNewUser(){
       this.addnewuser()
-      this.receivemsg()
     },
     reduceUser(){
       this.reduceuser()
-      this.receivemsg()
     }
   }
 }
