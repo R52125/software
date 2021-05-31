@@ -14,7 +14,7 @@
 <!--            </a>-->
 <!--          </li>-->
           <li class="nav-item">
-            <a class="nav-link">用户登记</a>
+            <a class="nav-link" href="#/master/adduser">用户登记</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#/master/CentralConfigs">中央空调配置</a>

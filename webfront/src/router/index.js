@@ -10,6 +10,7 @@ import CentralMonitoroption from "../components/CentralMonitoroption";
 import FormOption from "../components/FormOption";
 import Formmes from "../views/Formmes";
 import Mastermes from "../views/Mastermes";
+import addUser from "../components/addUser";
 
 //安装路由
 Vue.use(VueRouter);
@@ -44,6 +45,11 @@ export default new VueRouter({
                     path: '/master/formoption',
                     name: 'formoption',
                     component: FormOption
+                },
+                {
+                    path: '/master/adduser',
+                    name: 'adduser',
+                    component: addUser
                 }
             ]
         },
