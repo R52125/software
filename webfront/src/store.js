@@ -42,6 +42,7 @@ export default new Vuex.Store({
         handlefre(state, newfre){
             this.state.frequency = newfre;
         },
+        // 发送配置
         sendconfig(state){
             ws.send(JSON.stringify({
                 mode: this.state.mode,
@@ -96,7 +97,7 @@ export default new Vuex.Store({
         },
         reduceuser(state){
             ws.send(JSON.stringify({
-                eventid: 13,
+                event_id: 13,
                 data:{
                     Room_id: this.state.Room_id,
                 }

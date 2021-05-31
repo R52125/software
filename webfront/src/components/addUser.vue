@@ -24,8 +24,8 @@
         </div>
         <div>
           <br>
-          <a class="btn btn-success" role="button" @click="addNewUser">用户登记</a>
-          <a class="btn btn-success" role="button" @click="reduceUser">用户退房</a>
+          <a class="btn btn-success mr-5 ml-5" role="button" @click="addNewUser">用户登记</a>
+          <a class="btn btn-success mr-5 ml-5" role="button" @click="reduceUser">用户退房</a>
         </div>
       </div>
     </div>
@@ -57,12 +57,12 @@ export default {
     }
   },
   methods:{
-    ...mapMutations(['addnewuser']),
+    ...mapMutations(['addnewuser', 'reduceuser']),
     addNewUser(){
       this.addnewuser()
     },
     reduceUser(){
-
+      this.reduceuser()
     }
   }
 }
