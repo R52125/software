@@ -30,15 +30,28 @@
       </div>
       <div class="card-footer text-muted text-center">
         <a class="btn btn-success ml-5 mr-5" href="#" role="button" >监测单个房间</a>
-        <a class="btn btn-success ml-5 mr-5" href="#/master/centralmonitor" role="button">监测所有房间</a>
+        <a class="btn btn-success ml-5 mr-5" @click="startmonitor" role="button">监测所有房间</a>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import {mapActions, mapMutations} from "vuex";
+
 export default {
-  name: "CentralMonitoroption"
+  name: "CentralMonitoroption",
+  computed:{
+
+  },
+  methods:{
+    ...mapMutations(['test']),
+    ...mapActions(['receivemsg']),
+    startmonitor(){
+      this.test()
+      this.receivemsg()
+    }
+  }
 }
 </script>
 

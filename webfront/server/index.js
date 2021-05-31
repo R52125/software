@@ -34,8 +34,27 @@ const Ws = require('ws');
 
     function handleMessage(msg){
         console.log(msg);
+        var e = JSON.parse(msg);
         server.clients.forEach((c) => {
-            c.send(msg);
+            // c.send(msg);
+            if (e.event_id != 17)
+                c.send(JSON.stringify({
+                    "event_id": e.event_id,
+                    "data":{
+                        "ack": 1,
+                    }
+                }))
+            else
+                c.send(JSON.stringify({
+                    "event_id": 17,
+                    "data":{
+                        "Room_id": "001",
+                        "cstate": 0,
+                        "Rmode": 0,
+                        "tem": 25,
+                        "wind": 2
+                    }
+                }))
         })
     }
 
