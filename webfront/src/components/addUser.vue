@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import {mapMutations, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 
 export default {
   name: "addUser",
@@ -58,11 +58,14 @@ export default {
   },
   methods:{
     ...mapMutations(['addnewuser', 'reduceuser']),
+    ...mapActions(['receivemsg']),
     addNewUser(){
       this.addnewuser()
+      this.receivemsg()
     },
     reduceUser(){
       this.reduceuser()
+      this.receivemsg()
     }
   }
 }

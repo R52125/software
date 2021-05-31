@@ -39,7 +39,7 @@
 
 <script>
 
-import {mapState, mapMutations} from "vuex";
+import {mapState, mapMutations, mapActions} from "vuex";
 
 export default {
   name: 'Main',
@@ -67,8 +67,10 @@ export default {
   },
   methods:{
     ...mapMutations(['check_id']),
+    ...mapActions(['receivemsg']),
     login(){
       this.check_id()
+      this.receivemsg()
     }
   }
 }

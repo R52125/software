@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import {mapMutations, mapState} from "vuex";
+import {mapActions, mapMutations, mapState} from "vuex";
 
 export default {
   name: "FormOption",
@@ -92,8 +92,10 @@ export default {
   },
   methods:{
     ...mapMutations(['getForm']),
+    ...mapActions(['receivemsg']),
     getform(){
-      this.getForm()
+      this.getForm(),
+      this.receivemsg()
     }
   }
 }

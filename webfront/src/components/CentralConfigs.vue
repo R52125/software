@@ -12,14 +12,14 @@
     </div>
     <div v-else style="text-align: center" >
       <i class="bi bi-power mr-2 ml-2 btn" @click="centralswitch">
-        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-power rounded-circle bg-primary" viewBox="-7 -7 30 30">
+        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-power rounded-circle bg-success" viewBox="-7 -7 30 30">
           <path d="M7.5 1v7h1V1h-1z"/>
           <path d="M3 8.812a4.999 4.999 0 0 1 2.578-4.375l-.485-.874A6 6 0 1 0 11 3.616l-.501.865A5 5 0 1 1 3 8.812z"/>
         </svg>
       </i>
     </div>
     <br>
-    <div class="card shadow-lg ml-5 mr-5">
+    <div class="card shadow-lg ml-5 mr-5" v-if="onoff == 0">
       <div class="card-body ml-5 mr-5">
         <br>
         <div class="input-group mb-3">
@@ -103,6 +103,7 @@ export default {
     },
     centralswitch(){
       this.switchreq()
+      this.receivemsg()
     }
   },
 
