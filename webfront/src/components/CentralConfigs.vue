@@ -31,6 +31,9 @@
             <option value=1>供暖模式</option>
           </select>
         </div>
+<!--        <div>-->
+<!--          {{receive}}-->
+<!--        </div>-->
         <br>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
@@ -38,7 +41,7 @@
           </div>
           <template v-if="mode == 0">
             <input type="text" class="form-control" id="fnge1" value="22">
-            </template>
+          </template>
           <template v-else>
             <input type="text" class="form-control" id="fnge2" value="28">
           </template>
@@ -65,7 +68,7 @@
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import {mapState, mapMutations, mapActions} from 'vuex'
 export default {
   name: "CentralConfigs",
   data: function (){
@@ -73,7 +76,7 @@ export default {
     }
   },
   computed:{
-    ...mapState(['mode', 'frequency', 'onoff']),
+    ...mapState(['mode', 'frequency', 'onoff', 'receive']),
     mode:{
       get(){
         return this.$store.state.mode;
@@ -93,13 +96,16 @@ export default {
   },
   methods:{
     ...mapMutations(['sendconfig', 'switchreq']),
+    ...mapActions(['receivemsg']),
     send(){
       this.sendconfig()
+      this.receivemsg()
     },
     centralswitch(){
       this.switchreq()
     }
-  }
+  },
+
 }
 </script>
 
