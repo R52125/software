@@ -33,6 +33,8 @@ export default new Vuex.Store({
         enddata: '',
         // 模式:  0：日报表; 1：周报表; 2：月报表
         formmodel: '',
+        // 从主机接收到的消息
+        receive: '',
     },
     mutations:{
         handlemode(state, newmode){
@@ -48,7 +50,8 @@ export default new Vuex.Store({
                 mode: this.state.mode,
                 frequency: this.state.frequency,
             }))
-            router.push('/master')
+            // console.log(typeof (this.state.receive))
+            // router.push('/master')
         },
         check_id(state){
             ws.send(JSON.stringify({
@@ -58,7 +61,8 @@ export default new Vuex.Store({
                     password: this.state.masterpassword,
                 }
             }));
-            router.push('/master')
+            router.push('/master');
+
         },
         handle_master(state, newmaster){
             this.state.master = newmaster;
@@ -95,6 +99,7 @@ export default new Vuex.Store({
             alert('登记成功');
             router.push('/master');
         },
+        // 退房
         reduceuser(state){
             ws.send(JSON.stringify({
                 event_id: 13,
@@ -122,8 +127,18 @@ export default new Vuex.Store({
                     formmodle: this.state.formmodel,
                 }
             }))
+        },
+        WebSocket_Receive(state, receive_msg){
+            this.state.receive = receive_msg;
         }
     },
+    actions:{
+        receivemsg(context){
+            ws.onmessage = function(callBack){
+                context.commit('WebSocket_Receive', callBack.data);
+            }
+        }
+    }
     // plugins:[createPersistedState({
     //     storage:window.sessionStorage
     // })]

@@ -1,4 +1,5 @@
 import {WS_ADDRESS} from "../configs";
+import store from "../store";
 
 function useWebSocket(){
     const ws = new WebSocket(WS_ADDRESS);
@@ -17,16 +18,15 @@ function useWebSocket(){
     }
 
     function handleOpen(e){
-        console.log('webSocket open', e);
+        console.log('FE: WebSocket open', e);
     }
     function handleClose(e){
-        console.log('webSocket close', e);
+        console.log('FE: WebSocket close', e);
     }
     function handleError(e){
-        console.log('webSocket error', e);
+        console.log('FE: WebSocket error', e);
     }
     function handleMessage(e){
-
     }
 
     return ws;
