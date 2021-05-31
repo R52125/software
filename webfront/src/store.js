@@ -47,8 +47,11 @@ export default new Vuex.Store({
         // 发送配置
         sendconfig(state){
             ws.send(JSON.stringify({
-                mode: this.state.mode,
-                frequency: this.state.frequency,
+                event_id: 15,
+                data:{
+                    mode: this.state.mode,
+                    frequency: this.state.frequency,
+                }
             }))
             // console.log(typeof (this.state.receive))
             // router.push('/master')
@@ -76,9 +79,9 @@ export default new Vuex.Store({
             else
                 this.state.onoff = 1;
             ws.send(JSON.stringify({
-                event_id: 11,
-                data:{
-                    onoff: this.state.onoff,
+                "event_id": 11,
+                "data":{
+                    "onoff": this.state.onoff,
                 }
             }))
         },
@@ -90,10 +93,10 @@ export default new Vuex.Store({
         },
         addnewuser(state){
             ws.send(JSON.stringify({
-                event_id: 12,
-                data:{
-                    Room_id: this.state.Room_id,
-                    user_id: this.state.user_id,
+                "event_id": 12,
+                "data":{
+                    "Room_id": this.state.Room_id,
+                    "user_id": this.state.user_id,
                 }
             }));
             alert('登记成功');
@@ -102,9 +105,9 @@ export default new Vuex.Store({
         // 退房
         reduceuser(state){
             ws.send(JSON.stringify({
-                event_id: 13,
-                data:{
-                    Room_id: this.state.Room_id,
+                "event_id": 13,
+                "data":{
+                    "Room_id": this.state.Room_id,
                 }
             }))
         },
@@ -119,12 +122,12 @@ export default new Vuex.Store({
         },
         getForm(state){
             ws.send(JSON.stringify({
-                eventid: 14,
-                data:{
-                    Room_id: this.state.Room_id,
-                    startdata: this.state.startdata,
-                    enddata: this.state.enddata,
-                    formmodle: this.state.formmodel,
+                "eventid": 14,
+                "data":{
+                    "Room_id": this.state.Room_id,
+                    "startdata": this.state.startdata,
+                    "enddata": this.state.enddata,
+                    "formmodle": this.state.formmodel,
                 }
             }))
         },
@@ -135,7 +138,18 @@ export default new Vuex.Store({
     actions:{
         receivemsg(context){
             ws.onmessage = function(callBack){
-                context.commit('WebSocket_Receive', callBack.data);
+                var e = JSON.parse(callBack.data);
+                switch(e.event_id){
+                    case 15:
+                        context.commit('WebSocket_Receive', e);
+                        break;
+                    case 3:
+                        break;
+                    case 4:
+                        break;
+                    default:
+                        console.log(e.event_id);
+                };
             }
         }
     }

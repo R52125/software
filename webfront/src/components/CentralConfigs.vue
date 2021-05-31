@@ -31,9 +31,9 @@
             <option value=1>供暖模式</option>
           </select>
         </div>
-        <div>
-          {{receive}}
-        </div>
+<!--        <div>-->
+<!--          {{receive}}-->
+<!--        </div>-->
         <br>
         <div class="input-group mb-3">
           <div class="input-group-prepend">
