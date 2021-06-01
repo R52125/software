@@ -63,6 +63,12 @@ export default new Vuex.Store({
         formdatalist: '',
         // 监控信息列表
         monitorlist: '',
+        // 报表耗电量
+        electricity: 0.0,
+        // 记录报表的请求有多少天
+        days: 0,
+        formArray:[],
+        form_count:[],
     },
     mutations:{
         handlemode(state, newmode){
@@ -92,6 +98,7 @@ export default new Vuex.Store({
                     password: this.state.masterpassword,
                 }
             }));
+            router.push('/master')
         },
         handle_master(state, newmaster){
             this.state.master = newmaster;
@@ -141,6 +148,14 @@ export default new Vuex.Store({
             this.state.formmodel = newmodel;
         },
         getForm(state){
+            var split1 = this.state.startdata.split('-');
+            var split2 = this.state.enddata.split('-');
+            var date1 = new Date(split1[0], (split1[1]-1), split1[2]);
+            var date2 = new Date(split2[0], (split2[1]-1), split2[2]);
+            var minusdate = Math.floor(date2.getTime()-date1.getTime())/(1000*60*60*24);
+            var date = Math.abs(minusdate);
+            this.state.days = date + 1;
+            console.log('date: ' + this.state.days);
             ws.send(JSON.stringify({
                 "eventid": 14,
                 "data":{
@@ -150,6 +165,7 @@ export default new Vuex.Store({
                     "formmodle": this.state.formmodel,
                 }
             }));
+
             router.push('/master/formmes')
         },
         // 开关机回应包
@@ -194,7 +210,42 @@ export default new Vuex.Store({
             this.state.Room_id = newdata.data.Room_id;
             this.state.up_times = newdata.data.up_times;
             this.state.total_cost = newdata.data.total_cost;
+            this.state.electricity = newdata.data.electricity;
             this.state.formdatalist = newdata.data.temp;
+            var i = 0;
+            var rem_j = 0;
+            var startDate = this.state.startdata;
+            for (i = 0; i < this.state.days; i++){
+                // console.log('i: ' + i)
+                // var split1 = this.state.startdata.split('-');
+                // var startDate = new Date(split1[0], split1[1], split1[2]);
+                this.state.formArray[i] = startDate;
+                // console.log('startDate: ' + startDate)
+                // console.log('formArray[i]: ' + this.state.formArray[i]);
+                var count = 0;
+                for (var j = rem_j; this.state.formdatalist[j]!=null; j++){
+                    console.log('j: ' + j);
+                    var check_time = this.state.formdatalist[j].start_time.split(' ');
+                    // console.log(this.state.formArray[i]);
+                    // console.log(check_time[0]);
+                    // console.log("hello");
+                    if (this.state.formArray[i] == check_time[0]){
+                        count++;
+                    }
+                    else{
+                        rem_j = j;
+                        break;
+                    }
+                }
+                this.state.form_count[i] = count;
+                startDate = new Date(startDate);
+                startDate = +startDate +1000*60*60*24;
+                startDate = new Date(startDate);
+                var nextDate = startDate.getFullYear() + "-" + (startDate.getMonth() + 1).toString().padStart(2, '0') + "-" +startDate.getDate().toString().padStart(2, '0');
+                startDate = nextDate;
+            }
+            console.log(this.state.formArray)
+            console.log(this.state.form_count)
             // console.log(this.state.formdatalist)
         },
         // 中央空调配置回应包

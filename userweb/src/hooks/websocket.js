@@ -41,20 +41,14 @@ function useWebSocket(){
             case 1:
                 WebSocket_centralconfig(e);
                 break;
-            case 2:
-                break;
             case 3:
                 WebSocket_sendwind(e);
-                break;
-            case 4:
                 break;
             case 5:
                 WebSocket_stopwind(e);
                 break;
             case 6:
                 WebSocket_interval(e);
-                break;
-            case 7:
                 break;
             default:
                 console.log(e);

@@ -5,9 +5,10 @@
     <div class="card mr-5 ml-5 shadow-lg mb-5">
       <div class="card-header text-center">
         <h4>房间号：{{ Room_id }}</h4>
+        <p class="card-text">从控机开关机次数：{{ up_times }}</p>
       </div>
       <div class="card-body mr-5 ml-5">
-        <p class="card-text">从控机开关机次数：{{ up_times }}</p>
+        <div></div>
         <div class="table-responsive pagination">
           <table class="table table-striped">
             <thead>
@@ -18,6 +19,7 @@
               <th scope="col">初始温度</th>
               <th scope="col">目标温度</th>
               <th scope="col">风量消耗</th>
+              <th scope="col">电量消耗</th>
               <th scope="col">所需费用</th>
             </tr>
             </thead>
@@ -29,6 +31,7 @@
               <td>{{ data.start_temp }}℃</td>
               <td>{{ data.end_temp }}℃</td>
               <td>{{ data.wind_power }}L</td>
+              <td>{{ data.electricity }}°</td>
               <td>￥{{ data.cost }}</td>
             </tr>
             </tbody>
