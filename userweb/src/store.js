@@ -37,7 +37,9 @@ export default new Vuex.Store({
         // 状态汇报频率
         state_interval: 1000,
         // 控制监控状态的ID值
-        control_state: ''
+        control_state: '',
+        // 标记送风状态：0:停止送风，1:正在送风
+        sendwind_state: 0,
     },
     mutations:{
         addtemperature(state){
@@ -120,15 +122,38 @@ export default new Vuex.Store({
             context.commit('WebSocket_interval', newdata);
         },
         handle_sendstate(context){
-            ws.send(JSON.stringify({
-                "event_id": 7,
-                "data":{
-                    "cur_temp": this.state.currenttemperature,
-                    "tar_temp": this.state.temperature,
-                    "mode": this.state.Rmode,
-                    "speed": this.state.wind,
+            if (this.state.switchbtn == 1){
+                ws.send(JSON.stringify({
+                    "event_id": 7,
+                    "data":{
+                        "cur_temp": this.state.currenttemperature,
+                        "tar_temp": this.state.temperature,
+                        "mode": this.state.Rmode,
+                        "speed": this.state.wind,
+                    }
+                }));
+                // 如果发现目标温度与当前温度不同,且处于停止送风状态，则发起送风请求
+                if(this.state.currenttemperature != this.state.temperature && this.state.sendwind_state == 0){
+                    ws.send(JSON.stringify({
+                        "event_id": 2,
+                        "data": {
+                            "speed": this.state.wind,
+                            "mode": this.state.Rmode,
+                        }
+                    }));
+                    // 将状态转为正在送风
+                    this.state.sendwind_state = 1;
                 }
-            }))
+                // 如果发现目标温度与当前温度相同,且处于正在送风状态，则发起停止送风请求
+                if(this.state.currenttemperature == this.state.temperature && this.state.sendwind_state == 1){
+                    ws.send(JSON.stringify({
+                        "event_id": 4,
+                        "data": {
+                        }
+                    }));
+                    this.state.sendwind_state = 0;
+                }
+            }
         },
     },
     plugins:[createPersistedState({
