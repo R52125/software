@@ -12,7 +12,10 @@ const ws = useWebSocket();
 
 export default new Vuex.Store({
     state:{
+        // 目标温度
         temperature: 25,
+        // 当前温度
+        currenttemperature: 25,
         // switchbtn: 0: 关机；1: 开机
         switchbtn: 0,
         // wind 1,2,3: 低 中 高
@@ -33,6 +36,8 @@ export default new Vuex.Store({
         currentcost_total: 0.0,
         // 状态汇报频率
         state_interval: 1000,
+        // 控制监控状态的ID值
+        control_state: ''
     },
     mutations:{
         addtemperature(state){
@@ -93,10 +98,12 @@ export default new Vuex.Store({
             this.state.currentcost_total = newdata.data.cost;
             // console.log(this.state.currentcost_total)
         },
+        // 获取监视频率
         WebSocket_interval(state, newdata){
             this.state.state_interval = newdata.data.interval;
-            console.log(this.state.state_interval)
-        }
+            // console.log(this.state.state_interval)
+        },
+
 
     },
     actions:{
@@ -111,7 +118,18 @@ export default new Vuex.Store({
         },
         handle_interval(context, newdata){
             context.commit('WebSocket_interval', newdata);
-        }
+        },
+        handle_sendstate(context){
+            ws.send(JSON.stringify({
+                "event_id": 7,
+                "data":{
+                    "cur_temp": this.state.currenttemperature,
+                    "tar_temp": this.state.temperature,
+                    "mode": this.state.Rmode,
+                    "speed": this.state.wind,
+                }
+            }))
+        },
     },
     plugins:[createPersistedState({
         storage:window.sessionStorage
