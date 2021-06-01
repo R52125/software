@@ -21,13 +21,18 @@ function useWebSocket(){
 
     function handleOpen(e){
         console.log('webSocket open', e);
-    }
+        WebSocket_sendstate();
+        // // 按一定频率发送状态汇报
+        // var State = setInterval('WebSocket_sendstate', store.state.state_interval);
+        // console.log(State, typeof(State));
+        // store.state.control_state = State;
+    };
     function handleClose(e){
         console.log('webSocket close', e);
-    }
+    };
     function handleError(e){
         console.log('webSocket error', e);
-    }
+    };
     function handleMessage(callBack){
         var e = JSON.parse(callBack.data);
         // console.log(e)
@@ -68,9 +73,17 @@ function useWebSocket(){
     // 主机向从机汇报频率
     function WebSocket_interval(newdata){
         store.dispatch('handle_interval', newdata);
+    };
+    // 从机向主机发状态
+    function WebSocket_sendstate(){
+        var State = setInterval(()=>{
+            store.dispatch('handle_sendstate')
+        }, store.state.state_interval);
+        console.log(State, typeof(State));
+        store.state.control_state = State;
+        // store.dispatch('handle_sendstate');
+        //console.log('hello')
     }
-
-
 
     return ws;
 }
