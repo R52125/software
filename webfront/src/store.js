@@ -37,8 +37,6 @@ export default new Vuex.Store({
         ack: '',
         // 从控机开机次数
         up_times: 0,
-        // 温控请求次数
-        tem_times: 0,
         // 温控请求的起始时间
         start_time: '',
         // 温控请求的结束时间
@@ -54,13 +52,17 @@ export default new Vuex.Store({
         // 总费用
         total_cost: 0,
         // state：0: 从控机开机，1: 从控机关机
-        cstate: 0,
+        // cstate: 0,
         // Rmode：0: 从控机制冷模式，1:从控机供暖模式
-        Rmode: 0,
+        // Rmode: 0,
         // 从控机温度
-        tem: 25,
+        // tem: 25,
         // 风速
-        wind: 0,
+        // wind: 0,
+        // 报表列表
+        formdatalist: '',
+        // 监控信息列表
+        monitorlist: '',
     },
     mutations:{
         handlemode(state, newmode){
@@ -147,7 +149,8 @@ export default new Vuex.Store({
                     "enddata": this.state.enddata,
                     "formmodle": this.state.formmodel,
                 }
-            }))
+            }));
+            router.push('/master/formmes')
         },
         // 开关机回应包
         WebSocket_switch_ack(state, newdata){
@@ -190,10 +193,9 @@ export default new Vuex.Store({
         WebSocket_getform_ack(state, newdata){
             this.state.Room_id = newdata.data.Room_id;
             this.state.up_times = newdata.data.up_times;
-            this.state.tem_times = newdata.data.tem_times;
             this.state.total_cost = newdata.data.total_cost;
-            for (i=1; i<=this.state.tem_times; i++){
-            }
+            this.state.formdatalist = newdata.data.temp;
+            // console.log(this.state.formdatalist)
         },
         // 中央空调配置回应包
         WebSocket_config_ack(state, newdata){
@@ -221,11 +223,12 @@ export default new Vuex.Store({
         },
         // 房间监测接收包
         Websocket_monitor(state, newdata){
-            this.state.Room_id = newdata.data.Room_id;
-            this.state.cstate = newdata.data.cstate;
-            this.state.Rmode = newdata.data.Rmode;
-            this.state.tem = newdata.data.tem;
-            this.state.wind = newdata.data.wind;
+            this.state.monitorlist = newdata.data;
+            // this.state.Room_id = newdata.data.Room_id;
+            // this.state.cstate = newdata.data.cstate;
+            // this.state.Rmode = newdata.data.Rmode;
+            // this.state.tem = newdata.data.tem;
+            // this.state.wind = newdata.data.wind;
             // console.log(this.state.Room_id, this.state.cstate, this.state.Rmode, this.state.tem, this.state.wind);
         }
     },
