@@ -29,58 +29,58 @@ const Ws = require('ws');
 
     function handleConnection(ws){
         console.log('BE:WebSocket connection');
-        // ws.send(JSON.stringify({
-        //     "event_id": 14,
-        //     "data":{
-        //         "Room_id": "001",
-        //         "up_times": 5,
-        //         "temp": [{
-        //             "id": 1,
-        //             "start_time": "2021-05-05 8:00:00",
-        //             "stop_time": "2021-05-05 8:00:15",
-        //             "start_temp": 23,
-        //             "end_temp": 25,
-        //             "wind_power": 100,
-        //             "cost": 200,
-        //         },
-        //             {
-        //                 "id": 2,
-        //                 "start_time": "2021-05-06 8:00:00",
-        //                 "stop_time": "2021-05-06 8:00:15",
-        //                 "start_temp": 24,
-        //                 "end_temp": 26,
-        //                 "wind_power": 200,
-        //                 "cost": 400,
-        //             }],
-        //         "total_cost": 600,
-        //     }
-        // }))
         ws.send(JSON.stringify({
-            "event_id": 17,
-            "data":[
-                {
-                    "Room_id": "001",
-                    "cstate": 1,
-                    "Rmode": 0,
-                    "tem": 25,
-                    "wind": 2
+            "event_id": 14,
+            "data":{
+                "Room_id": "001",
+                "up_times": 5,
+                "temp": [{
+                    "id": 1,
+                    "start_time": "2021-05-05 8:00:00",
+                    "stop_time": "2021-05-05 8:00:15",
+                    "start_temp": 23,
+                    "end_temp": 25,
+                    "wind_power": 100,
+                    "cost": 200,
                 },
-                {
-                    "Room_id": "002",
-                    "cstate": 1,
-                    "Rmode": 0,
-                    "tem": 23,
-                    "wind": 1
-                },
-                {
-                    "Room_id": "003",
-                    "cstate": 0,
-                    "Rmode": 0,
-                    "tem": 23,
-                    "wind": 1
-                }
-            ],
+                    {
+                        "id": 2,
+                        "start_time": "2021-05-06 8:00:00",
+                        "stop_time": "2021-05-06 8:00:15",
+                        "start_temp": 24,
+                        "end_temp": 26,
+                        "wind_power": 200,
+                        "cost": 400,
+                    }],
+                "total_cost": 600,
+            }
         }))
+        // ws.send(JSON.stringify({
+        //     "event_id": 17,
+        //     "data":[
+        //         {
+        //             "Room_id": "001",
+        //             "cstate": 1,
+        //             "Rmode": 0,
+        //             "tem": 25,
+        //             "wind": 2
+        //         },
+        //         {
+        //             "Room_id": "002",
+        //             "cstate": 1,
+        //             "Rmode": 0,
+        //             "tem": 23,
+        //             "wind": 1
+        //         },
+        //         {
+        //             "Room_id": "003",
+        //             "cstate": 0,
+        //             "Rmode": 0,
+        //             "tem": 23,
+        //             "wind": 1
+        //         }
+        //     ],
+        // }))
         ws.on('message', handleMessage);
     }
 
