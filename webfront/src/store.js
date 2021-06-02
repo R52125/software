@@ -231,14 +231,34 @@ export default new Vuex.Store({
                 this.state.inweek = 0;
         },
         // 计算周数
-        count_week(){
+        count_week(state){
             this.state.days = Math.ceil(this.state.days/7)
+        },
+        // 计算月的数量
+        count_month(state, newdata){
+            this.state.days = 1;
+            this.state.formArray[0] = this.state.startdata.split('-')[1];
+            var end_month = newdata.pop();
+            var date_time_string = end_month.start_time;
+            var date_string = date_time_string.split(' ');
+            var end_date_month = date_string[0].split('-');
+            for (var i=0; ; i++){
+                if (this.state.formArray[i] != end_date_month[1]){
+                    this.state.formArray[i+1] = (Number(this.state.formArray[i])+1).toString().padStart(2, '0');
+                    this.state.days++;
+                }
+                else{
+                    break;
+                }
+            }
+            console.log("days: " + this.state.days);
         },
         // 报表回应包
         WebSocket_getform_ack(state, newdata){
             this.state.formArray.length = 0;
             this.state.form_count.length = 0;
             this.state.form_location.length = 0;
+            // 日报表
             if (this.state.formmodel == 0){
                 this.state.Room_id = newdata.data.Room_id;
                 this.state.up_times = newdata.data.up_times;
@@ -280,6 +300,7 @@ export default new Vuex.Store({
                     startDate = nextDate;
                 }
             }
+            // 月报表
             else if (this.state.formmodel == 1){
                 this.state.Room_id = newdata.data.Room_id;
                 this.state.up_times = newdata.data.up_times;
@@ -336,7 +357,61 @@ export default new Vuex.Store({
                         break;
                 }
             }
-            // console.log("Array: " + this.state.formArray)
+            else{
+                this.state.Room_id = newdata.data.Room_id;
+                this.state.up_times = newdata.data.up_times;
+                this.state.total_cost = newdata.data.total_cost;
+                this.state.electricity = newdata.data.electricity;
+                this.state.formdatalist = newdata.data.temp;
+                var count_non = 0;
+                var rem_j = 0;
+                this.state.form_location[0] = 0;
+                // 计算月数
+                this.commit('count_month', this.state.formdatalist);
+                var start_date_time_string = this.state.formdatalist[0].start_time;
+                var start_date_string = start_date_time_string.split(' ');
+                var start_date_month = start_date_string[0].split('-');
+                var record_i = 0;
+                this.state.form_location[0] = 0;
+                for (var i=0; i<this.state.days; i++){
+                    if (start_date_month[1] != this.state.formArray[i]){
+                        this.state.form_count[i] = 0;
+                        this.state.form_location[i+1] = 0;
+                    }
+                    else{
+                        record_i = i;
+                        break;
+                    }
+                }
+                console.log("record_i: ", record_i);
+                for (var i=record_i; i<this.state.days; i++){
+                    var count = 0;
+                    var test_j = 0;
+                    for (var j=rem_j; this.state.formdatalist[j]!=null; j++){
+                        // 解析JSON包
+                        var date_time_string = this.state.formdatalist[j].start_time;
+                        var date_string = date_time_string.split(' ');
+                        var date_month = date_string[0].split('-');
+                        if (date_month[1] == this.state.formArray[i]){
+                            count++;
+                            count_non++;
+                        }
+                        else{
+                            // console.log("date_month: ", date_month[1])
+                            // console.log("formArray: ", this.state.formArray[i])
+                            rem_j = j;
+                            break;
+                        }
+                        test_j = j;
+                    }
+                    this.state.form_count[i] = count;
+                    this.state.form_location[i+1] = count_non;
+
+                    if (this.state.formdatalist[test_j+1]==null)
+                        break;
+                }
+            }
+            console.log("Array: " + this.state.formArray)
             console.log("form_count: " + this.state.form_count)
             console.log("form_location: " + this.state.form_location)
             // console.log(this.state.formdatalist)
