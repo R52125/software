@@ -63,8 +63,23 @@ export default new Vuex.Store({
         formdatalist: '',
         // 监控信息列表
         monitorlist: '',
+        // 报表耗电量
+        electricity: 0.0,
+        // 记录报表的请求有多少天
+        days: 0,
+        // 把每次循环的第一日(周、月)提出来
+        formArray:[],
+        //  统计每次循环的天数
+        form_count:[],
+        // 记录循环开始在第几个位置
+        form_location: [],
+        // 是否在一周以内
+        inweek: 0
     },
     mutations:{
+        handle_statei(state, newdata){
+            this.state.state_remi = newdata;
+        },
         handlemode(state, newmode){
             this.state.mode = newmode;
         },
@@ -92,6 +107,7 @@ export default new Vuex.Store({
                     password: this.state.masterpassword,
                 }
             }));
+            router.push('/master')
         },
         handle_master(state, newmaster){
             this.state.master = newmaster;
@@ -141,6 +157,14 @@ export default new Vuex.Store({
             this.state.formmodel = newmodel;
         },
         getForm(state){
+            var split1 = this.state.startdata.split('-');
+            var split2 = this.state.enddata.split('-');
+            var date1 = new Date(split1[0], (split1[1]-1), split1[2]);
+            var date2 = new Date(split2[0], (split2[1]-1), split2[2]);
+            var minusdate = Math.floor(date2.getTime()-date1.getTime())/(1000*60*60*24);
+            var date = Math.abs(minusdate);
+            this.state.days = date + 1;
+            console.log('date: ' + this.state.days);
             ws.send(JSON.stringify({
                 "eventid": 14,
                 "data":{
@@ -150,6 +174,7 @@ export default new Vuex.Store({
                     "formmodle": this.state.formmodel,
                 }
             }));
+
             router.push('/master/formmes')
         },
         // 开关机回应包
@@ -189,12 +214,131 @@ export default new Vuex.Store({
                 alert('用户退房失败，请重试')
             }
         },
+        // 判断是否在一周以内
+        judge_week(state, newdata){
+            var new_date = new Date(newdata.check_time);
+            var old_date = new Date(newdata.formArray);
+            var difftime = new_date - old_date;
+            console.log("difftime: " + difftime);
+            console.log("newtime: " + new_date);
+            console.log("oldtime: " + old_date);
+            console.log(difftime < 1000*60*60*24 *7)
+            // 一周内
+            if (difftime < 1000*60*60*24 *7)
+                this.state.inweek = 1;
+            // 一周外
+            else
+                this.state.inweek = 0;
+        },
+        // 计算周数
+        count_week(){
+            this.state.days = Math.ceil(this.state.days/7)
+        },
         // 报表回应包
         WebSocket_getform_ack(state, newdata){
-            this.state.Room_id = newdata.data.Room_id;
-            this.state.up_times = newdata.data.up_times;
-            this.state.total_cost = newdata.data.total_cost;
-            this.state.formdatalist = newdata.data.temp;
+            this.state.formArray.length = 0;
+            this.state.form_count.length = 0;
+            this.state.form_location.length = 0;
+            if (this.state.formmodel == 0){
+                this.state.Room_id = newdata.data.Room_id;
+                this.state.up_times = newdata.data.up_times;
+                this.state.total_cost = newdata.data.total_cost;
+                this.state.electricity = newdata.data.electricity;
+                this.state.formdatalist = newdata.data.temp;
+                var count_non = 0;
+                var rem_j = 0;
+                var startDate = this.state.startdata;
+                this.state.form_location[0] = 0;
+                for (var i = 0; i < this.state.days; i++){
+                    // console.log('i: ' + i)
+                    this.state.formArray[i] = startDate;
+                    // console.log('startDate: ' + startDate)
+                    // console.log('formArray[i]: ' + this.state.formArray[i]);
+                    var count = 0;
+                    for (var j = rem_j; this.state.formdatalist[j]!=null; j++){
+                        // console.log('j: ' + j);
+                        var check_time = this.state.formdatalist[j].start_time.split(' ');
+                        // console.log(this.state.formArray[i]);
+                        // console.log(check_time[0]);
+                        // console.log("hello");
+                        if (this.state.formArray[i] == check_time[0]){
+                            count_non++;
+                            count++;
+                        }
+                        else{
+                            rem_j = j;
+                            break;
+                        }
+                    }
+                    this.state.form_count[i] = count;
+                    this.state.form_location[i+1] = count_non;
+                    // 下一天
+                    startDate = new Date(startDate);
+                    startDate = +startDate +1000*60*60*24;
+                    startDate = new Date(startDate);
+                    var nextDate = startDate.getFullYear() + "-" + (startDate.getMonth() + 1).toString().padStart(2, '0') + "-" +startDate.getDate().toString().padStart(2, '0');
+                    startDate = nextDate;
+                }
+            }
+            else if (this.state.formmodel == 1){
+                this.state.Room_id = newdata.data.Room_id;
+                this.state.up_times = newdata.data.up_times;
+                this.state.total_cost = newdata.data.total_cost;
+                this.state.electricity = newdata.data.electricity;
+                this.state.formdatalist = newdata.data.temp;
+                var count_non = 0;
+                var rem_j = 0;
+                var startDate = this.state.startdata;
+                this.state.form_location[0] = 0;
+                // 计算周数
+                this.commit('count_week');
+                for (var i = 0; i < this.state.days; i++){
+                    // console.log('i: ' + i)
+                    this.state.formArray[i] = startDate;
+                    // console.log('startDate: ' + startDate)
+                    // console.log('formArray[i]: ' + this.state.formArray[i]);
+                    var count = 0;
+                    var test_j = 0;
+                    for (var j = rem_j; this.state.formdatalist[j]!=null; j++){
+                        console.log("jj: ", j)
+                        console.log("hello1")
+                        // console.log('j: ' + j);
+                        var check_time = this.state.formdatalist[j].start_time.split(' ');
+                        console.log("Array: " + this.state.formArray[i]);
+                        console.log("check_time: " + check_time[0]);
+                        // console.log("hello");
+                        this.commit('judge_week', {
+                            "formArray": this.state.formArray[i],
+                            "check_time": check_time[0]
+                        });
+                        if (this.state.inweek == 1){
+                            count_non++;
+                            count++;
+                        }
+                        else{
+                            console.log('j: ' + j)
+                            rem_j = j;
+                            break;
+                        }
+                        test_j = j;
+                    }
+                    console.log('hello2')
+                    this.state.form_count[i] = count;
+                    this.state.form_location[i+1] = count_non;
+                    // 下一周
+                    startDate = new Date(startDate);
+                    startDate = +startDate + 1000*60*60*24 *7;
+                    startDate = new Date(startDate);
+                    var nextDate = startDate.getFullYear() + "-" + (startDate.getMonth() + 1).toString().padStart(2, '0') + "-" +startDate.getDate().toString().padStart(2, '0');
+                    startDate = nextDate;
+
+                    if (this.state.formdatalist[test_j+1]==null)
+                        break;
+                }
+            }
+            // console.log("Array: " + this.state.formArray)
+            console.log("form_count: " + this.state.form_count)
+            console.log("form_location: " + this.state.form_location)
             // console.log(this.state.formdatalist)
         },
         // 中央空调配置回应包
@@ -214,12 +358,6 @@ export default new Vuex.Store({
             else{
                 alert('管理员登陆成功')
             }
-        },
-        test(state){
-          ws.send(JSON.stringify({
-              "event_id": 17
-          }));
-          router.push('/master/centralmonitor')
         },
         // 房间监测接收包
         Websocket_monitor(state, newdata){
@@ -243,7 +381,7 @@ export default new Vuex.Store({
             context.commit('WebSocket_reduceuser_ack', newdata)
         },
         handle_getform(context, newdata){
-            context.commit('WebSocket_getform_ack', newdata)
+           context.commit('WebSocket_getform_ack', newdata);
         },
         handle_config(context, newdata){
             context.commit('WebSocket_config_ack', newdata)
@@ -254,37 +392,6 @@ export default new Vuex.Store({
         handle_monitor(context, newdata){
             context.commit('Websocket_monitor', newdata)
         },
-        // receivemsg(context){
-        //     ws.onmessage = function(callBack){
-        //         var e = JSON.parse(callBack.data);
-        //         // console.log(e);
-        //         switch(e.event_id){
-        //             case 11:
-        //                 context.commit('WebSocket_switch_ack', e);
-        //                 break;
-        //             case 12:
-        //                 context.commit('WebSocket_adduser_ack', e);
-        //                 break;
-        //             case 13:
-        //                 context.commit('WebSocket_reduceuser_ack', e);
-        //                 break;
-        //             case 14:
-        //                 context.commit('WebSocket_getform_ack', e);
-        //                 break;
-        //             case 15:
-        //                 context.commit('WebSocket_config_ack', e);
-        //                 break;
-        //             case 16:
-        //                 context.commit('Websocket_login_ack', e);
-        //                 break;
-        //             case 17:
-        //                 context.commit('Websocket_monitor', e);
-        //                 break;
-        //             default:
-        //                 console.log(e.event_id);
-        //         };
-        //     }
-        // }
     }
     // plugins:[createPersistedState({
     //     storage:window.sessionStorage

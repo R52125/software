@@ -45,10 +45,6 @@ export default {
 
   },
   methods:{
-    ...mapMutations(['test']),
-    startmonitor(){
-      this.test()
-    }
   }
 }
 </script>

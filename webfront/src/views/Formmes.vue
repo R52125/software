@@ -1,13 +1,20 @@
 <template>
   <div>
+    <div class="text-center">
+      {{test1}}
+    </div>
     <h1 class="text-center mb-5">日报表</h1>
 
     <div class="card mr-5 ml-5 shadow-lg mb-5">
       <div class="card-header text-center">
         <h4>房间号：{{ Room_id }}</h4>
-      </div>
-      <div class="card-body mr-5 ml-5">
         <p class="card-text">从控机开关机次数：{{ up_times }}</p>
+      </div>
+      <div class="card-body mr-5 ml-5" v-for="index in days" :key="index">
+<!--        <div>-->
+<!--          <h2>{{index}}</h2>-->
+<!--          <h3>{{form_count[index-1]}}</h3>-->
+<!--        </div>-->
         <div class="table-responsive pagination">
           <table class="table table-striped">
             <thead>
@@ -18,18 +25,27 @@
               <th scope="col">初始温度</th>
               <th scope="col">目标温度</th>
               <th scope="col">风量消耗</th>
+              <th scope="col">电量消耗</th>
               <th scope="col">所需费用</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="data in formdatalist" :key="data.id">
-              <th scope="row">{{ data.id }}</th>
-              <td>{{ data.start_time }}</td>
-              <td>{{ data.stop_time }}</td>
-              <td>{{ data.start_temp }}℃</td>
-              <td>{{ data.end_temp }}℃</td>
-              <td>{{ data.wind_power }}L</td>
-              <td>￥{{ data.cost }}</td>
+<!--            <div>{{rem_i}}</div>-->
+            <tr v-for="i in form_count[index-1]">
+<!--              <div>i: {{ i }}</div>-->
+<!--              <div>i: {{ i }}</div>-->
+<!--              <div>i: {{i}}</div>-->
+<!--              <div>index-1: {{index-1}}</div>-->
+<!--              <div>form_location[index-1]: {{form_location[index-2]}}</div>-->
+<!--              <div>{{formdatalist[rem_i]}}</div>-->
+              <th scope="row">{{ formdatalist[form_location[index-1]+i-1].id }}</th>
+              <td>{{ formdatalist[form_location[index-1]+i-1].start_time }}</td>
+              <td>{{ formdatalist[form_location[index-1]+i-1].stop_time }}</td>
+              <td>{{ formdatalist[form_location[index-1]+i-1].start_temp }}℃</td>
+              <td>{{ formdatalist[form_location[index-1]+i-1].end_temp }}℃</td>
+              <td>{{ formdatalist[form_location[index-1]+i-1].wind_power }}L</td>
+              <td>{{ formdatalist[form_location[index-1]+i-1].electricity }}°</td>
+              <td>￥{{ formdatalist[form_location[index-1]+i-1].cost }}</td>
             </tr>
             </tbody>
           </table>
@@ -38,52 +54,6 @@
       </div>
     </div>
 
-<!--    <div class="card mr-5 ml-5 shadow-lg">-->
-<!--      <div class="card-header text-center">-->
-<!--        <h4>房间号：2</h4>-->
-<!--      </div>-->
-<!--      <div class="card-body mr-5 ml-5">-->
-<!--        <p class="card-text">从控机开关机次数：5</p>-->
-<!--        <div class="table-responsive pagination">-->
-<!--          <table class="table table-striped">-->
-<!--            <thead>-->
-<!--            <tr>-->
-<!--              <th scope="col">#</th>-->
-<!--              <th scope="col">开启时间</th>-->
-<!--              <th scope="col">关闭时间</th>-->
-<!--              <th scope="col">初始温度</th>-->
-<!--              <th scope="col">目标温度</th>-->
-<!--              <th scope="col">风量消耗</th>-->
-<!--              <th scope="col">所需费用</th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            <tr>-->
-<!--              <th scope="row">1</th>-->
-<!--              <td>2021.05.20 9:20</td>-->
-<!--              <td>2021.05.20 9:21</td>-->
-<!--              <td>23℃</td>-->
-<!--              <td>25℃</td>-->
-<!--              <td>100L</td>-->
-<!--              <td>￥100</td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--              <th scope="row">2</th>-->
-<!--              <td>Jacob</td>-->
-<!--              <td>Thornton</td>-->
-<!--              <td>@fat</td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--              <th scope="row">3</th>-->
-<!--              <td>Larry</td>-->
-<!--              <td>the Bird</td>-->
-<!--              <td>@twitter</td>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--          </table>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
 
   </div>
 </template>
@@ -93,9 +63,24 @@ import {mapState} from "vuex";
 
 export default {
   name: "Formmes",
+  data: function() {
+    return{
+    }
+  },
   computed:{
-    ...mapState(['Room_id', 'up_times', 'total_cost', 'formdatalist']),
-  }
+    ...mapState(['Room_id', 'up_times', 'total_cost','days', 'formdatalist', 'form_count', 'form_location', 'test1']),
+  },
+  methods:{
+  },
+  // 自动触发点击事件
+  directives:{
+    trigger:{
+      inserted(el,binging){
+        // console.log("自动触发事件")
+        el.click()
+      }
+    }
+  },
 }
 </script>
 
