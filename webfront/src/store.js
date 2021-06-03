@@ -74,7 +74,9 @@ export default new Vuex.Store({
         // 记录循环开始在第几个位置
         form_location: [],
         // 是否在一周以内
-        inweek: 0
+        inweek: 0,
+        // 是否在一个月以内
+        inmonth: 0,
     },
     mutations:{
         handle_statei(state, newdata){
@@ -219,10 +221,10 @@ export default new Vuex.Store({
             var new_date = new Date(newdata.check_time);
             var old_date = new Date(newdata.formArray);
             var difftime = new_date - old_date;
-            console.log("difftime: " + difftime);
-            console.log("newtime: " + new_date);
-            console.log("oldtime: " + old_date);
-            console.log(difftime < 1000*60*60*24 *7)
+            // console.log("difftime: " + difftime);
+            // console.log("newtime: " + new_date);
+            // console.log("oldtime: " + old_date);
+            // console.log(difftime < 1000*60*60*24 *7)
             // 一周内
             if (difftime < 1000*60*60*24 *7)
                 this.state.inweek = 1;
@@ -234,17 +236,45 @@ export default new Vuex.Store({
         count_week(state){
             this.state.days = Math.ceil(this.state.days/7)
         },
+        // 判断是否在同一个月
+        judge_month(state, newdata){
+            var startdate = newdata.start_month.split('-')
+            var enddate = newdata.end_month.split('-');
+            // console.log("startdate: ", startdate);
+            // console.log("enddate: ", enddate);
+            // console.log(startdate[0] == enddate[0] && startdate[1] == enddate[1])
+            if (startdate[0] == enddate[0] && startdate[1] == enddate[1]){
+                this.state.inmonth = 1;
+            }
+            else{
+                this.state.inmonth = 0;
+            }
+        },
         // 计算月的数量
         count_month(state, newdata){
             this.state.days = 1;
-            this.state.formArray[0] = this.state.startdata.split('-')[1];
-            var end_month = newdata.pop();
-            var date_time_string = end_month.start_time;
-            var date_string = date_time_string.split(' ');
-            var end_date_month = date_string[0].split('-');
+            var start_date_month = this.state.startdata.split('-');
+            this.state.formArray[0] = start_date_month[0] + '-' + start_date_month[1];
+            var end_date_month_string = this.state.enddata.split('-');
+            var end_date_month = end_date_month_string[0] + '-' + end_date_month_string[1];
+            // console.log("forArray: " + this.state.formArray[0]);
+            // console.log("end_month: " + end_date_month);
             for (var i=0; ; i++){
-                if (this.state.formArray[i] != end_date_month[1]){
-                    this.state.formArray[i+1] = (Number(this.state.formArray[i])+1).toString().padStart(2, '0');
+                this.commit('judge_month',{
+                    start_month: this.state.formArray[i],
+                    end_month: end_date_month
+                });
+                if (this.state.inmonth == 0){
+                    var month_string = this.state.formArray[i].split('-');
+                    var new_month = (Number(month_string[1])+1).toString().padStart(2, '0');
+                    if (new_month > 12){
+                        // 年份+1，月份 = 00
+                        this.state.formArray[i+1] = (Number(month_string[0])+1).toString().padStart(2, '0') + '-' + '01';
+                    }
+                    else{
+                        // 年份不变，月份+1
+                        this.state.formArray[i+1] = month_string[0] + '-' + new_month;
+                    }
                     this.state.days++;
                 }
                 else{
@@ -321,12 +351,12 @@ export default new Vuex.Store({
                     var count = 0;
                     var test_j = 0;
                     for (var j = rem_j; this.state.formdatalist[j]!=null; j++){
-                        console.log("jj: ", j)
-                        console.log("hello1")
+                        // console.log("jj: ", j)
+                        // console.log("hello1")
                         // console.log('j: ' + j);
                         var check_time = this.state.formdatalist[j].start_time.split(' ');
-                        console.log("Array: " + this.state.formArray[i]);
-                        console.log("check_time: " + check_time[0]);
+                        // console.log("Array: " + this.state.formArray[i]);
+                        // console.log("check_time: " + check_time[0]);
                         // console.log("hello");
                         this.commit('judge_week', {
                             "formArray": this.state.formArray[i],
@@ -343,7 +373,7 @@ export default new Vuex.Store({
                         }
                         test_j = j;
                     }
-                    console.log('hello2')
+                    // console.log('hello2')
                     this.state.form_count[i] = count;
                     this.state.form_location[i+1] = count_non;
                     // 下一周
@@ -368,13 +398,20 @@ export default new Vuex.Store({
                 this.state.form_location[0] = 0;
                 // 计算月数
                 this.commit('count_month', this.state.formdatalist);
+                // 解析包，获取第一条记录
                 var start_date_time_string = this.state.formdatalist[0].start_time;
                 var start_date_string = start_date_time_string.split(' ');
                 var start_date_month = start_date_string[0].split('-');
+                // 第一条记录的年-月
+                var check_month = start_date_month[0] + '-' + start_date_month[1];
                 var record_i = 0;
                 this.state.form_location[0] = 0;
                 for (var i=0; i<this.state.days; i++){
-                    if (start_date_month[1] != this.state.formArray[i]){
+                    this.commit('judge_month',{
+                        start_month: this.state.formArray[i],
+                        end_month: check_month,
+                    });
+                    if (this.state.inmonth == 0){
                         this.state.form_count[i] = 0;
                         this.state.form_location[i+1] = 0;
                     }
@@ -383,7 +420,7 @@ export default new Vuex.Store({
                         break;
                     }
                 }
-                console.log("record_i: ", record_i);
+                // console.log("record_i: ", record_i);
                 for (var i=record_i; i<this.state.days; i++){
                     var count = 0;
                     var test_j = 0;
@@ -392,7 +429,14 @@ export default new Vuex.Store({
                         var date_time_string = this.state.formdatalist[j].start_time;
                         var date_string = date_time_string.split(' ');
                         var date_month = date_string[0].split('-');
-                        if (date_month[1] == this.state.formArray[i]){
+                        // 某条记录的年-月
+                        var somerecord_month = date_month[0] + '-' + date_month[1];
+
+                        this.commit('judge_month',{
+                            start_month: this.state.formArray[i],
+                            end_month: somerecord_month,
+                        });
+                        if (this.state.inmonth == 1){
                             count++;
                             count_non++;
                         }
@@ -411,9 +455,9 @@ export default new Vuex.Store({
                         break;
                 }
             }
-            console.log("Array: " + this.state.formArray)
-            console.log("form_count: " + this.state.form_count)
-            console.log("form_location: " + this.state.form_location)
+            // console.log("Array: " + this.state.formArray)
+            // console.log("form_count: " + this.state.form_count)
+            // console.log("form_location: " + this.state.form_location)
             // console.log(this.state.formdatalist)
         },
         // 中央空调配置回应包

@@ -73,7 +73,7 @@ function useWebSocket(){
         var State = setInterval(()=>{
             store.dispatch('handle_sendstate')
         }, store.state.state_interval);
-        console.log(State, typeof(State));
+        // console.log(State, typeof(State));
         store.state.control_state = State;
         // store.dispatch('handle_sendstate');
         //console.log('hello')

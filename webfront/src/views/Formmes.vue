@@ -11,6 +11,15 @@
         <p class="card-text">从控机开关机次数：{{ up_times }}</p>
       </div>
       <div class="card-body mr-5 ml-5" v-for="index in days" :key="index">
+        <div class="text-center" v-if="formmodel == 0">
+          {{formArray[index-1]}}
+        </div>
+        <div class="text-center" v-else-if="formmodel == 1">
+          {{formArray[index-1]}} ~ {{ formArray[index]}}
+        </div>
+        <div class="text-center" v-else>
+          {{formArray[index-1]}}
+        </div>
 <!--        <div>-->
 <!--          <h2>{{index}}</h2>-->
 <!--          <h3>{{form_count[index-1]}}</h3>-->
@@ -68,7 +77,7 @@ export default {
     }
   },
   computed:{
-    ...mapState(['Room_id', 'up_times', 'total_cost','days', 'formdatalist', 'form_count', 'form_location', 'test1']),
+    ...mapState(['Room_id', 'up_times', 'total_cost','days', 'formdatalist', 'form_count', 'form_location', 'test1', "formArray", 'formmodel']),
   },
   methods:{
   },
