@@ -29,6 +29,7 @@ function useWebSocket(){
     };
     function handleClose(e){
         console.log('webSocket close', e);
+        clearTimeout(store.state.control_state);
     };
     function handleError(e){
         console.log('webSocket error', e);
