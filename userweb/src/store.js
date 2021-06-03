@@ -182,33 +182,48 @@ export default new Vuex.Store({
                 // 如果当前处于送风状态，且目标温度与当前温度不同，则房间温度向当前温度变化
                 if (this.state.sendwind_state == 1 && this.state.currenttemperature != this.state.temperature){
                     // 低风
-                    if (this.state.wind == 0){
-                        // 如果差值小于0.25，一步到位
+                    if (this.state.wind == 1){
+                        // 如果差值小于0.1，一步到位
                         if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.25){
                             this.state.currenttemperature= this.state.temperature;
                         }
                         else{
-                            this.state.currenttemperature = (this.state.temperature + this.state.currenttemperature)/2
+                            if (this.state.currenttemperature < this.state.temperature){
+                                this.state.currenttemperature = (this.state.currenttemperature*10 + 0.1*10)/10;
+                            }
+                            else{
+                                this.state.currenttemperature = (this.state.currenttemperature*10 - 0.1*10)/10;
+                            }
                         }
                     }
                     // 中风
-                    else if (this.state.wind == 1){
-                        // 如果差值小于0.5，一步到位
-                        if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.5){
+                    else if (this.state.wind == 2){
+                        // 如果差值小于0.2，一步到位
+                        if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.2){
                             this.state.currenttemperature = this.state.temperature;
                         }
                         else{
-                            this.state.currenttemperature = (this.state.temperature * 2 + this.state.currenttemperature)/3
+                            if (this.state.currenttemperature < this.state.temperature){
+                                this.state.currenttemperature = (this.state.currenttemperature*10 + 0.2*10)/10;
+                            }
+                            else{
+                                this.state.currenttemperature = (this.state.currenttemperature*10 - 0.2*10)/10;
+                            }
                         }
                     }
                     // 高风
                     else{
-                        // 如果差值小于1，一步到位
-                        if (Math.abs(this.state.temperature-this.state.currenttemperature) < 1){
+                        // 如果差值小于0.4，一步到位
+                        if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.4){
                             this.state.currenttemperature = this.state.temperature;
                         }
                         else{
-                            this.state.currenttemperature = (this.state.temperature * 3 + this.state.currenttemperature)/4
+                            if (this.state.currenttemperature < this.state.temperature){
+                                this.state.currenttemperature = (this.state.currenttemperature*10 - 0.4*10)/10;
+                            }
+                            else{
+                                this.state.currenttemperature = (this.state.currenttemperature*10 - 0.4*10)/10;
+                            }
                         }
                     }
                 }
