@@ -69,6 +69,7 @@ export default new Vuex.Store({
         changeswitchbtn(state){
             if (this.state.switchbtn == 0){
                 this.state.ws = useWebSocket();
+                console.log('ws: ', this.state.ws);
                 this.state.switchbtn = 1;
             }
             else{

@@ -36,7 +36,7 @@ function useWebSocket(){
     };
     function handleMessage(callBack){
         var e = JSON.parse(callBack.data);
-        // console.log(e)
+        console.log(e)
         switch (e.event_id){
             // 中央空调状态反馈
             case 1:

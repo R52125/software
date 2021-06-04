@@ -109,7 +109,7 @@ export default new Vuex.Store({
                     password: this.state.masterpassword,
                 }
             }));
-            router.push('/master')
+            // router.push('/master')
         },
         handle_master(state, newmaster){
             this.state.master = newmaster;
@@ -168,15 +168,14 @@ export default new Vuex.Store({
             this.state.days = date + 1;
             console.log('date: ' + this.state.days);
             ws.send(JSON.stringify({
-                "eventid": 14,
+                "event_id": 14,
                 "data":{
                     "Room_id": this.state.Room_id,
                     "startdata": this.state.startdata,
                     "enddata": this.state.enddata,
-                    "formmodle": this.state.formmodel,
+                    "formmodel": this.state.formmodel,
                 }
             }));
-
             router.push('/master/formmes')
         },
         // 开关机回应包
@@ -200,6 +199,7 @@ export default new Vuex.Store({
         },
         // 用户登记回应包
         WebSocket_adduser_ack(state, newdata){
+            console.log('ack: ' + newdata.data.ack + 'ack_type: ' + typeof (newdata.data.ack))
             if (newdata.data.ack == 1){
                 alert('用户登记成功\n房间号为 ' + this.state.Room_id)
             }
@@ -330,7 +330,7 @@ export default new Vuex.Store({
                     startDate = nextDate;
                 }
             }
-            // 月报表
+            // 周报表
             else if (this.state.formmodel == 1){
                 this.state.Room_id = newdata.data.Room_id;
                 this.state.up_times = newdata.data.up_times;
@@ -387,6 +387,7 @@ export default new Vuex.Store({
                         break;
                 }
             }
+            // 月报表
             else{
                 this.state.Room_id = newdata.data.Room_id;
                 this.state.up_times = newdata.data.up_times;
@@ -455,9 +456,9 @@ export default new Vuex.Store({
                         break;
                 }
             }
-            // console.log("Array: " + this.state.formArray)
-            // console.log("form_count: " + this.state.form_count)
-            // console.log("form_location: " + this.state.form_location)
+            console.log("Array: " + this.state.formArray)
+            console.log("form_count: " + this.state.form_count)
+            console.log("form_location: " + this.state.form_location)
             // console.log(this.state.formdatalist)
         },
         // 中央空调配置回应包
@@ -475,7 +476,7 @@ export default new Vuex.Store({
                 router.push('/master')
             }
             else{
-                alert('管理员登陆成功')
+                alert('管理员登陆失败')
             }
         },
         // 房间监测接收包

@@ -20,7 +20,7 @@
             <h5>空调模式：供暖</h5>
           </div>
           <br>
-          <h5>房间温度：{{ data.tem }}℃</h5>
+          <h5>房间温度：{{ data.temp }}℃</h5>
           <br>
           <div v-if="data.wind == 0">
             <h5>空调风速：低</h5>
