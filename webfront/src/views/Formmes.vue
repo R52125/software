@@ -15,7 +15,7 @@
           {{formArray[index-1]}}
         </div>
         <div class="text-center" v-else-if="formmodel == 1">
-          {{formArray[index-1]}} ~ {{ formArray[index]}}
+          {{formArray[index-1]}} ~ {{ formendweek[index-1] }}
         </div>
         <div class="text-center" v-else>
           {{formArray[index-1]}}
@@ -59,8 +59,11 @@
             </tbody>
           </table>
         </div>
-        <p>每日所需总费用：{{total_cost}}</p>
+        <p v-if="formmodel == 0">每日所需总费用：{{form_cost_circletotal[index-1]}}</p>
+        <p v-else-if="formmodel == 1">每周所需总费用：{{form_cost_circletotal[index-1]}}</p>
+        <p v-else>每月所需总费用：￥{{form_cost_circletotal[index-1]}}</p>
       </div>
+      <div class="card-footer bg-transparent border-success text-center">所需总费用：￥{{total_cost}}</div>
     </div>
 
 
@@ -77,7 +80,7 @@ export default {
     }
   },
   computed:{
-    ...mapState(['Room_id', 'up_times', 'total_cost','days', 'formdatalist', 'form_count', 'form_location', 'test1', "formArray", 'formmodel']),
+    ...mapState(['Room_id', 'up_times', 'total_cost','days', 'formdatalist', 'form_count', 'form_location', 'test1', "formArray", 'formmodel', 'formendweek', 'form_cost_circletotal']),
   },
   methods:{
   },

@@ -20,10 +20,12 @@ export default new Vuex.Store({
         outtemperature: 25,
         // switchbtn: 0: 关机；1: 开机
         switchbtn: 0,
-        // wind 1,2,3: 低 中 高
+        // wind 0,1,2: 低 中 高
         wind: 1,
-        // 从机工作模式: 0: 制冷；1: 暖气
+        // 从机工作模式: 0: 制冷；1: 暖气；
         Rmode: 0,
+        // 发给主机的状态包的模式：0: 送冷风；1: 送暖风；2: 不送风
+        Smode: 0,
         // 身份证号
         id: '',
         // 房间号
@@ -78,11 +80,11 @@ export default new Vuex.Store({
             }
         },
         addwind(state){
-            if (this.state.wind != 3 && this.state.switchbtn == 1)
+            if (this.state.wind != 2 && this.state.switchbtn == 1)
                 this.state.wind++;
         },
         reducewind(state){
-            if (this.state.wind != 1 && this.state.switchbtn == 1)
+            if (this.state.wind != 0 && this.state.switchbtn == 1)
                 this.state.wind--;
         },
         coldmode(state){
@@ -152,36 +154,45 @@ export default new Vuex.Store({
         handle_sendstate(context){
             // 从控机开机的情况才会汇报状态
             if (this.state.switchbtn == 1){
+                if ((Math.abs(this.state.temperature-this.state.currenttemperature) < 1 &&this.state.sendwind_state == 0) ||
+                    (this.state.temperature == this.state.currenttemperature && this.state.sendwind_state == 1)){
+                    this.state.sendwind_state = 0;
+                    this.state.Smode = 2;
+                }
+                else{
+                    this.state.sendwind_state = 1;
+                    this.state.Smode = this.state.Rmode;
+                }
                 this.state.ws.send(JSON.stringify({
                     "event_id": 7,
                     "data":{
                         "cur_temp": this.state.currenttemperature,
                         "tar_temp": this.state.temperature,
-                        "mode": this.state.Rmode,
+                        "mode": this.state.Smode,
                         "speed": this.state.wind,
                     }
                 }));
                 // 如果发现目标温度与当前温度不同,且处于停止送风状态，则发起送风请求
-                if(this.state.currenttemperature != this.state.temperature && this.state.sendwind_state == 0){
-                    this.state.ws.send(JSON.stringify({
-                        "event_id": 2,
-                        "data": {
-                            "speed": this.state.wind,
-                            "mode": this.state.Rmode,
-                        }
-                    }));
-                    // 将状态转为正在送风
-                    this.state.sendwind_state = 1;
-                }
+                // if(this.state.currenttemperature != this.state.temperature && this.state.sendwind_state == 0){
+                //     this.state.ws.send(JSON.stringify({
+                //         "event_id": 2,
+                //         "data": {
+                //             "speed": this.state.wind,
+                //             "mode": this.state.Rmode,
+                //         }
+                //     }));
+                //     // 将状态转为正在送风
+                //     this.state.sendwind_state = 1;
+                // }
                 // 如果发现目标温度与当前温度相同,且处于正在送风状态，则发起停止送风请求
-                if(this.state.currenttemperature == this.state.temperature && this.state.sendwind_state == 1){
-                    this.state.ws.send(JSON.stringify({
-                        "event_id": 4,
-                        "data": {
-                        }
-                    }));
-                    this.state.sendwind_state = 0;
-                }
+                // if(this.state.currenttemperature == this.state.temperature && this.state.sendwind_state == 1){
+                //     this.state.ws.send(JSON.stringify({
+                //         "event_id": 4,
+                //         "data": {
+                //         }
+                //     }));
+                //     this.state.sendwind_state = 0;
+                // }
                 // // 如果当前处于待机状态（停止送风）,房间的温度会向外界温度变化
                 // if(this.state.sendwind_state == 0){
                 //     this.state.currenttemperature = (this.state.currenttemperature+this.state.outtemperature)/2
@@ -189,7 +200,7 @@ export default new Vuex.Store({
                 // 如果当前处于送风状态，且目标温度与当前温度不同，则房间温度向当前温度变化
                 if (this.state.sendwind_state == 1 && this.state.currenttemperature != this.state.temperature){
                     // 低风
-                    if (this.state.wind == 1){
+                    if (this.state.wind == 0){
                         // 如果差值小于0.1，一步到位
                         if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.25){
                             this.state.currenttemperature= this.state.temperature;
@@ -204,7 +215,7 @@ export default new Vuex.Store({
                         }
                     }
                     // 中风
-                    else if (this.state.wind == 2){
+                    else if (this.state.wind == 1){
                         // 如果差值小于0.2，一步到位
                         if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.2){
                             this.state.currenttemperature = this.state.temperature;

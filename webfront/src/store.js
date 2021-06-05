@@ -69,6 +69,8 @@ export default new Vuex.Store({
         days: 0,
         // 把每次循环的第一日(周、月)提出来
         formArray:[],
+        // 记录周报表每周的结束日期
+        formendweek:[],
         //  统计每次循环的天数
         form_count:[],
         // 记录循环开始在第几个位置
@@ -77,6 +79,8 @@ export default new Vuex.Store({
         inweek: 0,
         // 是否在一个月以内
         inmonth: 0,
+        // 每次循环的总价钱
+        form_cost_circletotal:[],
     },
     mutations:{
         handle_statei(state, newdata){
@@ -236,6 +240,19 @@ export default new Vuex.Store({
         count_week(state){
             this.state.days = Math.ceil(this.state.days/7)
         },
+        // 获得每周的最后一天
+        get_endweek(state){
+            for (var i=0; i<this.state.days; i++){
+                var startDate = this.state.formArray[i];
+                // 第六天
+                startDate = new Date(startDate);
+                startDate = +startDate + 1000*60*60*24 *6;
+                startDate = new Date(startDate);
+                var nextDate = startDate.getFullYear() + "-" + (startDate.getMonth() + 1).toString().padStart(2, '0') + "-" +startDate.getDate().toString().padStart(2, '0');
+                startDate = nextDate;
+                this.state.formendweek[i] = startDate;
+            }
+        },
         // 判断是否在同一个月
         judge_month(state, newdata){
             var startdate = newdata.start_month.split('-')
@@ -283,11 +300,24 @@ export default new Vuex.Store({
             }
             console.log("days: " + this.state.days);
         },
+        // 计算每次循环的价钱
+        count_formcircle(state){
+            this.state.form_cost_circletotal[0] = 0;
+            for (var i=0; i<this.state.days; i++){
+                var count = 0;
+                for (var j=0; j<this.state.form_count[i]; j++){
+                    count +=  this.state.formdatalist[this.state.form_location[i] + j].cost;
+                }
+                this.state.form_cost_circletotal[i] = count;
+            }
+        },
         // 报表回应包
         WebSocket_getform_ack(state, newdata){
             this.state.formArray.length = 0;
             this.state.form_count.length = 0;
             this.state.form_location.length = 0;
+            this.state.formendweek.length = 0;
+            this.state.form_cost_circletotal.length = 0;
             // 日报表
             if (this.state.formmodel == 0){
                 this.state.Room_id = newdata.data.Room_id;
@@ -350,10 +380,9 @@ export default new Vuex.Store({
                     // console.log('formArray[i]: ' + this.state.formArray[i]);
                     var count = 0;
                     var test_j = 0;
+                    // console.log("i: " + i);
+                    // console.log("rem_j1: " + rem_j)
                     for (var j = rem_j; this.state.formdatalist[j]!=null; j++){
-                        // console.log("jj: ", j)
-                        // console.log("hello1")
-                        // console.log('j: ' + j);
                         var check_time = this.state.formdatalist[j].start_time.split(' ');
                         // console.log("Array: " + this.state.formArray[i]);
                         // console.log("check_time: " + check_time[0]);
@@ -365,15 +394,16 @@ export default new Vuex.Store({
                         if (this.state.inweek == 1){
                             count_non++;
                             count++;
+                            rem_j++;
                         }
                         else{
-                            console.log('j: ' + j)
-                            rem_j = j;
                             break;
                         }
                         test_j = j;
+                        // console.log("test_j: " + test_j)
+                        // console.log("rem_j2: " + rem_j)
                     }
-                    // console.log('hello2')
+                    // console.log("rem_j3: " + rem_j)
                     this.state.form_count[i] = count;
                     this.state.form_location[i+1] = count_non;
                     // 下一周
@@ -383,9 +413,12 @@ export default new Vuex.Store({
                     var nextDate = startDate.getFullYear() + "-" + (startDate.getMonth() + 1).toString().padStart(2, '0') + "-" +startDate.getDate().toString().padStart(2, '0');
                     startDate = nextDate;
 
-                    if (this.state.formdatalist[test_j+1]==null)
-                        break;
+                    // if (this.state.formdatalist[test_j+1]==null)
+                    //     break;
                 }
+                // 生成每周的最后一天
+                this.commit('get_endweek');
+
             }
             // 月报表
             else{
@@ -456,9 +489,12 @@ export default new Vuex.Store({
                         break;
                 }
             }
-            console.log("Array: " + this.state.formArray)
-            console.log("form_count: " + this.state.form_count)
-            console.log("form_location: " + this.state.form_location)
+            // 计算每次循环的价钱
+            this.commit('count_formcircle');
+            console.log("countArray: " + this.state.form_cost_circletotal)
+            // console.log("Array: " + this.state.formArray)
+            // console.log("form_count: " + this.state.form_count)
+            // console.log("form_location: " + this.state.form_location)
             // console.log(this.state.formdatalist)
         },
         // 中央空调配置回应包

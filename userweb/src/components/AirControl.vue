@@ -67,6 +67,9 @@
         </svg>
       </i>
     </div>
+    <div class="text-center">
+      当前开销：{{currentcost}}
+    </div>
   </div>
 </template>
 
@@ -78,7 +81,7 @@ export default {
     return{};
   },
   computed:{
-    ...mapState(['temperature']),
+    ...mapState(['temperature', 'currentcost']),
   },
   methods:{
     ...mapMutations(['addtemperature', 'reducetemperature', "changeswitchbtn", 'addwind', "reducewind", "coldmode", "warmmode"]),

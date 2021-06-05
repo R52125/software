@@ -104,8 +104,8 @@ const Ws = require('ws');
                     "up_times": 5,
                     "temp": [{
                         "id": 1,
-                        "start_time": "2021-04-03 8:00:00",
-                        "stop_time": "2021-04-03 8:00:15",
+                        "start_time": "2021-06-03 8:00:00",
+                        "stop_time": "2021-06-03 8:00:15",
                         "start_temp": 23,
                         "end_temp": 25,
                         "wind_power": 100,
@@ -161,7 +161,8 @@ const Ws = require('ws');
                             "wind_power": 200,
                             "cost": 400,
                             "electricity": 100.0
-                        }],
+                        }
+                        ],
                     "total_cost": 600,
                 }
             }))
