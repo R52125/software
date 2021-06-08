@@ -81,6 +81,8 @@ export default new Vuex.Store({
         inmonth: 0,
         // 每次循环的总价钱
         form_cost_circletotal:[],
+        // 中央空调工作温度
+        centraltemp: 22,
     },
     mutations:{
         handle_statei(state, newdata){
@@ -88,6 +90,10 @@ export default new Vuex.Store({
         },
         handlemode(state, newmode){
             this.state.mode = newmode;
+        },
+        // 改变中央空调工作温度
+        handlecentraltemp(state, newtemp){
+            this.state.centraltemp = newtemp;
         },
         // 改变频率
         handlefre(state, newfre){
@@ -99,6 +105,7 @@ export default new Vuex.Store({
                 event_id: 15,
                 data:{
                     mode: this.state.mode,
+                    temp: this.state.centraltemp,
                     frequency: this.state.frequency,
                 }
             }))
@@ -170,7 +177,7 @@ export default new Vuex.Store({
             var minusdate = Math.floor(date2.getTime()-date1.getTime())/(1000*60*60*24);
             var date = Math.abs(minusdate);
             this.state.days = date + 1;
-            console.log('date: ' + this.state.days);
+            // console.log('date: ' + this.state.days);
             ws.send(JSON.stringify({
                 "event_id": 14,
                 "data":{
@@ -298,7 +305,7 @@ export default new Vuex.Store({
                     break;
                 }
             }
-            console.log("days: " + this.state.days);
+            // console.log("days: " + this.state.days);
         },
         // 计算每次循环的价钱
         count_formcircle(state){
@@ -336,12 +343,14 @@ export default new Vuex.Store({
                     // console.log('formArray[i]: ' + this.state.formArray[i]);
                     var count = 0;
                     for (var j = rem_j; this.state.formdatalist[j]!=null; j++){
-                        // console.log('j: ' + j);
+                        console.log('j: ' + j);
                         var check_time = this.state.formdatalist[j].start_time.split(' ');
-                        // console.log(this.state.formArray[i]);
-                        // console.log(check_time[0]);
-                        // console.log("hello");
+                        // console.log('formdatalist[j]: ', this.state.formdatalist[j])
+                        // console.log('formArray: ', this.state.formArray[i])
+                        // console.log('check_time: ', check_time)
+                        // console.log('true or false: ', this.state.formArray[i] == check_time[0])
                         if (this.state.formArray[i] == check_time[0]){
+                            // console.log('hello')
                             count_non++;
                             count++;
                         }
@@ -491,7 +500,8 @@ export default new Vuex.Store({
             }
             // 计算每次循环的价钱
             this.commit('count_formcircle');
-            console.log("countArray: " + this.state.form_cost_circletotal)
+            // console.log("countArray: " + this.state.form_cost_circletotal)
+            // console.log('days: ' + this.state.days)
             // console.log("Array: " + this.state.formArray)
             // console.log("form_count: " + this.state.form_count)
             // console.log("form_location: " + this.state.form_location)

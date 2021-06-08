@@ -37,10 +37,10 @@
             <label class="input-group-text" for="inputGroupSelect01">缺省工作温度</label>
           </div>
           <template v-if="mode == 0">
-            <input type="text" class="form-control" id="fnge1" value="22">
+            <input type="text" class="form-control" id="fnge1" value="22" v-model="centraltemp">
           </template>
           <template v-else>
-            <input type="text" class="form-control" id="fnge2" value="28">
+            <input type="text" class="form-control" id="fnge2" value="28" v-model="centraltemp">
           </template>
 
         </div>
@@ -73,7 +73,7 @@ export default {
     }
   },
   computed:{
-    ...mapState(['mode', 'frequency', 'onoff']),
+    ...mapState(['mode', 'frequency', 'onoff', 'centraltemp']),
     mode:{
       get(){
         return this.$store.state.mode;
@@ -88,6 +88,14 @@ export default {
       },
       set(value){
         this.$store.commit('handlefre', value);
+      }
+    },
+    centraltemp: {
+      get(){
+        return this.$store.state.centraltemp;
+      },
+      set(value) {
+        this.$store.commit('handlecentraltemp', value);
       }
     }
   },

@@ -52,7 +52,7 @@ function useWebSocket(){
                 WebSocket_interval(e);
                 break;
             default:
-                console.log(e);
+                // console.log(e);
         }
     };
 

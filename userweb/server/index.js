@@ -29,17 +29,25 @@ const Ws = require('ws');
 
     function handleConnection(ws){
         console.log('BE:WebSocket connection');
-        // while(1) {
-            // ws.send(JSON.stringify({
-            //     "hey": "hello",
-            // }));
-        // }
-        ws.send(JSON.stringify({
-            "event_id": 6,
-            "data":{
-                "interval": 1000
-            }
-        }))
+        // var State = setInterval(() =>{
+        //     ws.send(JSON.stringify({
+        //         "event_id": 3,
+        //         "data":{
+        //             "temp": 22,
+        //             "speed": 1,
+        //             "mode": 0,
+        //             "cost": 5.00
+        //         }
+        //     }))
+        // }, 1000)
+
+
+        // ws.send(JSON.stringify({
+        //     "event_id": 6,
+        //     "data":{
+        //         "interval": 1000
+        //     }
+        // }))
 
         ws.on('message', handleMessage);
     }
