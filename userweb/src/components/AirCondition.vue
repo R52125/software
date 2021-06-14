@@ -1,5 +1,6 @@
 <template>
-  <div class="card ml-2 mr-2 shadow-lg" style="height: 12rem">
+  <div>
+  <div class="card ml-2 mr-2 shadow-lg round" style="height: 12rem">
     <ul class="list-group list-group-flush">
       <br>
       <br>
@@ -50,6 +51,9 @@
 
     </ul>
   </div>
+    <div class="card ml-2 mr-2 round-down" style="height: 2rem">
+    </div>
+  </div>
 </template>
 
 <script>
@@ -67,5 +71,12 @@ export default {
 </script>
 
 <style scoped>
-
+.round{
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.round-down{
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+}
 </style>

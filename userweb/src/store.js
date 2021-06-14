@@ -99,12 +99,14 @@ export default new Vuex.Store({
             if (this.state.Rmode == 1 && this.state.switchbtn == 1){
                 this.state.Rmode = 0;
                 this.state.temperature = 22;
+                this.state.currenttemperature = 22;
             }
         },
         warmmode(state){
             if(this.state.Rmode == 0 && this.state.switchbtn == 1){
                 this.state.Rmode = 1;
                 this.state.temperature = 28;
+                this.state.currenttemperature = 28;
             }
         },
         // 检查身份证号数字对不对
@@ -127,7 +129,7 @@ export default new Vuex.Store({
             this.state.Ctemp = newdata.data.temp;
             // this.state.wind = newdata.data.speed;
             this.state.Cmode = newdata.data.mode;
-            this.state.currentcost = newdata.data.cost;
+            this.state.currentcost = newdata.data.cost.toFixed(2);
             // console.log(this.state.Ctemp, this.state.wind,this.state.Cmode,this.state.currentcost)
             // 改变房间温度
             this.commit('change_roomtemp');
@@ -195,7 +197,6 @@ export default new Vuex.Store({
         },
         change_mode_children(state){
             this.state.Smode = this.state.Rmode;
-            // console.log('change_time: ', Date());
             this.state.flag = 0;
         },
         change_mode(state){
@@ -206,7 +207,7 @@ export default new Vuex.Store({
                 this.state.flag = 1;
                 this.state.timer_change =  setTimeout(()=>{
                     this.commit('change_mode_children')
-                    }, 1000);
+                    }, this.state.state_interval);
             }
             // 其他
             else{
@@ -216,9 +217,10 @@ export default new Vuex.Store({
                     clearTimeout(this.state.timer_change);
                     this.state.timer_change =  setTimeout(()=>{
                         this.commit('change_mode_children')
-                    }, 1000);
+                    }, this.state.state_interval);
                 }
             }
+            this.state.sendwind_state = 1;
         }
     },
     actions:{
@@ -235,6 +237,7 @@ export default new Vuex.Store({
             context.commit('WebSocket_interval', newdata);
         },
         handle_sendstate(context){
+            // console.log('interval: ', this.state.state_interval)
             // 从控机开机的情况才会汇报状态
             if (this.state.switchbtn == 1){
                 // 两种不用发送风请求的情况
@@ -258,7 +261,7 @@ export default new Vuex.Store({
                 })
                 this.state.last_temperature = this.state.temperature;
                 this.state.ws.send(a);
-                // console.log(a);
+                console.log(a);
                 // 如果发现目标温度与当前温度不同,且处于停止送风状态，则发起送风请求
                 // if(this.state.currenttemperature != this.state.temperature && this.state.sendwind_state == 0){
                 //     this.state.ws.send(JSON.stringify({

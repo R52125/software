@@ -36,7 +36,7 @@ function useWebSocket(){
     };
     function handleMessage(callBack){
         var e = JSON.parse(callBack.data);
-        // console.log(e)
+        console.log(e)
         switch (e.event_id){
             // 中央空调状态反馈
             case 1:
@@ -52,7 +52,7 @@ function useWebSocket(){
                 WebSocket_interval(e);
                 break;
             default:
-                // console.log(e);
+                console.log(e);
         }
     };
 
@@ -68,12 +68,19 @@ function useWebSocket(){
     // 主机向从机汇报频率
     function WebSocket_interval(newdata){
         store.dispatch('handle_interval', newdata);
+        clearTimeout(store.state.control_state);
+        var State = setInterval(()=>{
+            store.dispatch('handle_sendstate')
+        }, store.state.state_interval);
+        console.log(store.state.state_interval);
+        store.state.control_state = State;
     };
     // 从机向主机发状态
     function WebSocket_sendstate(){
         var State = setInterval(()=>{
             store.dispatch('handle_sendstate')
         }, store.state.state_interval);
+        console.log(store.state.state_interval)
         // console.log(State, typeof(State));
         store.state.control_state = State;
         // store.dispatch('handle_sendstate');

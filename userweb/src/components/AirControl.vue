@@ -70,6 +70,9 @@
     <div class="text-center">
       当前开销：{{currentcost}}
     </div>
+    <div class="text-cneter">
+      当前温度；{{currenttemperature}}
+    </div>
   </div>
 </template>
 
@@ -81,7 +84,7 @@ export default {
     return{};
   },
   computed:{
-    ...mapState(['temperature', 'currentcost']),
+    ...mapState(['temperature', 'currentcost', 'currenttemperature']),
   },
   methods:{
     ...mapMutations(['addtemperature', 'reducetemperature', "changeswitchbtn", 'addwind', "reducewind", "coldmode", "warmmode"]),
