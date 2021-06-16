@@ -29,7 +29,7 @@ function useWebSocket(){
     function handleMessage(callBack){
         var e = JSON.parse(callBack.data);
         console.log("e: ", e)
-        console.log("temp: ", e.data.temp)
+        // console.log("temp: ", e.data.temp)
         switch(e.event_id){
             case 11:
                 WebSocket_switch(e);

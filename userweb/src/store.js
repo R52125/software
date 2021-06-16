@@ -13,11 +13,11 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state:{
         // 上一次的目标温度
-        last_temperature: 22,
+        last_temperature: 25,
         // 目标温度
-        temperature: 22,
+        temperature: 25,
         // 当前温度
-        currenttemperature: 22,
+        currenttemperature: 25,
         // 外界温度
         outtemperature: 25,
         // switchbtn: 0: 关机；1: 开机
@@ -52,6 +52,8 @@ export default new Vuex.Store({
         flag: 0,
         // 控制模式转换的ID值
         timer_change: '',
+        // 新加的speed，主机显示通知从机不送风
+        speed: 0,
     },
     mutations:{
         addtemperature(state){
@@ -60,7 +62,7 @@ export default new Vuex.Store({
                     this.state.temperature++;
             }
             else{
-                console.log('Ctemp: ' + this.state.Ctemp)
+                // console.log('Ctemp: ' + this.state.Ctemp)
                 if (this.state.switchbtn == 1 && this.state.temperature != this.state.Ctemp)
                     this.state.temperature++;
             }
@@ -79,7 +81,7 @@ export default new Vuex.Store({
         changeswitchbtn(state){
             if (this.state.switchbtn == 0){
                 this.state.ws = useWebSocket();
-                console.log('ws: ', this.state.ws);
+                // console.log('ws: ', this.state.ws);
                 this.state.switchbtn = 1;
             }
             else{
@@ -127,12 +129,25 @@ export default new Vuex.Store({
         // 处理主机送风
         WebSocket_wind(state, newdata){
             this.state.Ctemp = newdata.data.temp;
-            // this.state.wind = newdata.data.speed;
+            this.state.speed = newdata.data.speed;
             this.state.Cmode = newdata.data.mode;
             this.state.currentcost = newdata.data.cost.toFixed(2);
             // console.log(this.state.Ctemp, this.state.wind,this.state.Cmode,this.state.currentcost)
-            // 改变房间温度
-            this.commit('change_roomtemp');
+            if (this.state.speed != -1){
+                // 改变房间温度
+                this.commit('change_roomtemp');
+            }
+            else{
+                // 室内温度向室外改变
+                //  制冷
+                if(this.state.Rmode == 0){
+                    this.state.currenttemperature = (this.state.currenttemperature*10 + 0.1*10)/10;
+                }
+                // 供暖
+                else {
+                    this.state.currenttemperature = (this.state.currenttemperature*10 - 0.1*10)/10;
+                }
+            }
         },
         // 处理主机同意停止送风
         WebSocket_stopwind(state, newdata){
@@ -148,48 +163,48 @@ export default new Vuex.Store({
         change_roomtemp(state){
             // 如果当前处于送风状态，且目标温度与当前温度不同，则房间温度向当前温度变化
             // if (this.state.sendwind_state == 1 && this.state.currenttemperature != this.state.temperature){
-                // 低风
-                if (this.state.wind == 0){
+                // 高风
+                if (this.state.wind == 2){
                     // 如果差值小于0.1，一步到位
-                    if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.1){
+                    if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.067){
                         this.state.currenttemperature= this.state.temperature;
                     }
                     else{
                         if (this.state.currenttemperature < this.state.temperature){
-                            this.state.currenttemperature = (this.state.currenttemperature*10 + 0.1*10)/10;
+                            this.state.currenttemperature = (this.state.currenttemperature*1000 + 0.067*1000)/1000;
                         }
                         else{
-                            this.state.currenttemperature = (this.state.currenttemperature*10 - 0.1*10)/10;
+                            this.state.currenttemperature = (this.state.currenttemperature*1000 - 0.067*1000)/1000;
                         }
                     }
                 }
                 // 中风
                 else if (this.state.wind == 1){
                     // 如果差值小于0.2，一步到位
-                    if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.2){
+                    if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.05){
                         this.state.currenttemperature = this.state.temperature;
                     }
                     else{
                         if (this.state.currenttemperature < this.state.temperature){
-                            this.state.currenttemperature = (this.state.currenttemperature*10 + 0.2*10)/10;
+                            this.state.currenttemperature = (this.state.currenttemperature*100 + 0.05*100)/100;
                         }
                         else{
-                            this.state.currenttemperature = (this.state.currenttemperature*10 - 0.2*10)/10;
+                            this.state.currenttemperature = (this.state.currenttemperature*100 - 0.05*100)/100;
                         }
                     }
                 }
-                // 高风
+                // 低风
                 else{
                     // 如果差值小于0.4，一步到位
-                    if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.4){
+                    if (Math.abs(this.state.temperature-this.state.currenttemperature) < 0.04){
                         this.state.currenttemperature = this.state.temperature;
                     }
                     else{
                         if (this.state.currenttemperature < this.state.temperature){
-                            this.state.currenttemperature = (this.state.currenttemperature*10 + 0.4*10)/10;
+                            this.state.currenttemperature = (this.state.currenttemperature*100 + 0.04*100)/100;
                         }
                         else{
-                            this.state.currenttemperature = (this.state.currenttemperature*10 - 0.4*10)/10;
+                            this.state.currenttemperature = (this.state.currenttemperature*100 - 0.04*100)/100;
                         }
                     }
                 }
@@ -283,10 +298,17 @@ export default new Vuex.Store({
                 //     }));
                 //     this.state.sendwind_state = 0;
                 // }
-                // // 如果当前处于待机状态（停止送风）,房间的温度会向外界温度变化
-                // if(this.state.sendwind_state == 0){
-                //     this.state.currenttemperature = (this.state.currenttemperature+this.state.outtemperature)/2
-                // }
+                // 如果当前处于待机状态（停止送风）,房间的温度会向外界温度变化
+                if(this.state.sendwind_state == 0){
+                    //  制冷
+                    if(this.state.Rmode == 0){
+                        this.state.currenttemperature = (this.state.currenttemperature*10 + 0.1*10)/10;
+                    }
+                    // 供暖
+                    else {
+                        this.state.currenttemperature = (this.state.currenttemperature*10 - 0.1*10)/10;
+                    }
+                }
             }
         },
     },

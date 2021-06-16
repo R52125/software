@@ -56,7 +56,7 @@
         </div>
         <br>
         <div class="text-center">
-          <input class="btn btn-primary mr-5 ml-5" type="submit" value="重置">
+<!--          <input class="btn btn-primary mr-5 ml-5" type="submit" value="重置">-->
           <input class="btn btn-primary mr-5 ml-5" type="submit" value="提交" @click="send">
         </div>
       </div>

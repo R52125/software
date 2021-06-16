@@ -1,9 +1,9 @@
 <template>
   <div class="container-fluid">
     <b-jumbotron>
-      <template v-slot:header>分布式温控系统</template>
+      <template v-slot:header>温控系统从机</template>
       <template v-slot:lead>
-        响应节能，绿色环保
+        软工第10小组
       </template>
       <hr class="my-4">
     </b-jumbotron>
@@ -31,7 +31,7 @@
             </form>
           </div>
 <!--          <b-button variant="primary" href="#/user"> 普通用户登录</b-button>-->
-          <b-button variant="primary" @click="login"> 普通用户登录</b-button>
+          <b-button variant="primary" @click="login">普通用户登录</b-button>
         </b-card>
 
       </b-tab>

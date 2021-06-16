@@ -210,7 +210,7 @@ export default new Vuex.Store({
         },
         // 用户登记回应包
         WebSocket_adduser_ack(state, newdata){
-            console.log('ack: ' + newdata.data.ack + 'ack_type: ' + typeof (newdata.data.ack))
+            // console.log('ack: ' + newdata.data.ack + 'ack_type: ' + typeof (newdata.data.ack))
             if (newdata.data.ack == 1){
                 alert('用户登记成功\n房间号为 ' + this.state.Room_id)
             }

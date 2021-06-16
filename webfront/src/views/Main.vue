@@ -2,9 +2,9 @@
   <template>
     <div class="container-fluid">
       <b-jumbotron>
-        <template v-slot:header>分布式温控系统</template>
+        <template v-slot:header>温控系统主机</template>
         <template v-slot:lead>
-          响应节能，绿色环保
+          软工第10小组
         </template>
         <hr class="my-4">
       </b-jumbotron>
