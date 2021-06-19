@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2a9c3eb9-3cb2-42ba-a27d-b4a7e0bf33ee" name="Default Changelist" comment="结束" />
+    <list default="true" id="2a9c3eb9-3cb2-42ba-a27d-b4a7e0bf33ee" name="Default Changelist" comment="结束3" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,7 +10,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="cbr" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -59,7 +59,14 @@
       <option name="project" value="LOCAL" />
       <updated>1624087716205</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="结束3">
+      <created>1624088109993</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1624088109993</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -92,6 +99,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="完成1和6" />
     <MESSAGE value="结束" />
-    <option name="LAST_COMMIT_MESSAGE" value="结束" />
+    <MESSAGE value="结束3" />
+    <option name="LAST_COMMIT_MESSAGE" value="结束3" />
   </component>
 </project>
