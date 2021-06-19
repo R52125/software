@@ -31,6 +31,13 @@
           <div v-else="data.wind == 2">
             <h5>空调风速：高</h5>
           </div>
+          <br>
+          <div v-if="data.ss == 0">
+            <h5>空调送风状态：不送风</h5>
+          </div>
+          <div v-else>
+            <h5>空调送风状态：送风</h5>
+          </div>
         </div>
         <div v-if="data.cstate == 0">
           <br>

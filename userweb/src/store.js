@@ -113,13 +113,21 @@ export default new Vuex.Store({
         },
         // 检查身份证号数字对不对
         check_id(state, logmes){
-            this.state.room = logmes.roomnumber;
-            this.state.id = logmes.username;
+            console.log(logmes.roomnumber)
+            if(logmes.roomnumber!='001' && logmes.roomnumber!='002' && logmes.roomnumber!='003' && logmes.roomnumber!='004'
+                && logmes.roomnumber!='120' && logmes.roomnumber!='121' && logmes.roomnumber!='122' && logmes.roomnumber != '123'){
+                alert('房间号错误！')
+            }
+            else{
+                this.state.room = logmes.roomnumber;
+                this.state.id = logmes.username;
+                router.push('/user')
+            }
             // ws.send(JSON.stringify({
             //     room: this.state.room,
             //     id: this.state.id
             // }));
-            router.push('/user')
+
         },
         // 中央空调状态反馈
         WebSocket_config(state, newdata){

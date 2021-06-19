@@ -30,6 +30,7 @@ function useWebSocket(){
     function handleClose(e){
         console.log('webSocket close', e);
         clearTimeout(store.state.control_state);
+        alert('连接关闭')
     };
     function handleError(e){
         console.log('webSocket error', e);
